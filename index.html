@@ -31,16 +31,25 @@ body {
     height: 200px;
 }
 #form_log textarea {
-    width:90%;
+    width:56%;
     height:100%;
+}
+
+#form_log > div {
+    width:40%;
+    height:100%;
+    display:inline-block;
+    background: #f0fff0;
 }
 </style>
 
+<!--
 = Нейронные сети =
 
 Огромный элемент искусственного интеллекта
 
 == Линейная алгебра ==
+-->
 
 <script>
 
@@ -48,6 +57,7 @@ var v = new Vector();
 var m = new Matrix();
 var n = new Neuron();
 
+/*
 var v1 = v.create(4, 'ones');
 var v2 = v.create(4, 'ones');
 var v3 = v.create(4, 'random');
@@ -140,6 +150,7 @@ m.T2(m1);
 document.write('<br>(m1)T:<br>');
 //v.write(m1);
 m.write(m1);
+*/
 
 document.write('<h2>Нейроны</h2>');
 
@@ -200,6 +211,7 @@ document.write('<h3>Обучение перцептрона</h3>');
 
 <form id='form_log'>
     <textarea name='log' disabled></textarea>
+    <div></div>
 </form>
 
 <script>
