@@ -27,7 +27,7 @@ function Use() {
 
             let x = opts.sets_using.get_x_example(ix);
 
-            if(opts.show_log) opts.func_write_log('x1: ');
+            if(opts.show_log) opts.func_write_log('Вход (x): ');
             if(opts.show_log) self.v.write(x, opts.func_write_log);
             if(opts.show_log) opts.func_write_log('\n');
 
@@ -35,6 +35,11 @@ function Use() {
 
             // перебираем слои
             for (let il=0;il<opts.w1.length;il++) {
+
+                if(opts.show_log) {
+                    if (il === opts.w1.length-1) {opts.func_write_log('  Выход (y):');
+                    } else { opts.func_write_log('  Слой '+(il+1)+':'); }
+                 }
 
                 if (il > 0) {x = layer_y;x.push(opts.b);}
 
