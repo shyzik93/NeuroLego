@@ -53,18 +53,16 @@ body {
 
 <script>
 
-var v = new Vector();
-var m = new Matrix();
-var n = new Neuron();
+var a = new Algebra();
 
 /*
-var v1 = v.create(4, 'ones');
-var v2 = v.create(4, 'ones');
-var v3 = v.create(4, 'random');
-var m1 = m.create(3, 4, 'random');
-var m2 = m.create(3, 4, 'random');
-var m3 = [1,2,3,4,5,6,2,3,0];//m.create(2, 3, 'random');
-var m4 = [1,2,3,4,5,6,3,2,0];//m.create(3, 2, 'random');
+var v1 = a.v.create(4, 'ones');
+var v2 = a.v.create(4, 'ones');
+var v3 = a.v.create(4, 'random');
+var m1 = a.m.create(3, 4, 'random');
+var m2 = a.m.create(3, 4, 'random');
+var m3 = [1,2,3,4,5,6,2,3,0];//a.m.create(2, 3, 'random');
+var m4 = [1,2,3,4,5,6,3,2,0];//a.m.create(3, 2, 'random');
 
 document.write('<h2>Векторы</h2>')
 
@@ -76,30 +74,30 @@ document.write('<br>v3 ');
 document.write(v3);
 
 document.write('<br><br>v1 * 5: ');
-v.MultiplyConst(v1, 5);
-v.write(v1);
+a.v.MultiplyConst(v1, 5);
+a.v.write(v1);
 
 document.write('<br>v1 + v2: ');
-v.Sum(v1, v2);
-v.write(v1);
+a.v.Sum(v1, v2);
+a.v.write(v1);
 
 document.write('<br>v1 - v2: ');
-v.Diff(v1, v2);
-v.write(v1);
+a.v.Diff(v1, v2);
+a.v.write(v1);
 
 document.write('<br>v1 * v2: ');
-document.write(v.MultiplyScal(v1, v2));
+document.write(a.v.MultiplyScal(v1, v2));
 
 document.write('<br>v1 x v3: ');
-v.MultiplyVect(v1, v3);
-v.write(v1);
+a.v.MultiplyVect(v1, v3);
+a.v.write(v1);
 
 document.write('<br><br>|v1|: ');
-document.write(v.GetLen(v1));
+document.write(a.v.GetLen(v1));
 document.write('<br>|v2|: ');
-document.write(v.GetLen(v2));
+document.write(a.v.GetLen(v2));
 document.write('<br>|v3|: ');
-document.write(v.GetLen(v3));
+document.write(a.v.GetLen(v3));
 
 document.write('<br><br>');
 
@@ -115,41 +113,41 @@ document.write('<br>m4: ');
 document.write(m4);
 
 document.write('<br><br>m1<br>');
-m.write(m1);
+a.m.write(m1);
 document.write('<br><br>m2<br>');
-m.write(m2);
+a.m.write(m2);
 document.write('<br><br>');
 document.write('<br><br>m3<br>');
-m.write(m3);
+a.m.write(m3);
 document.write('<br><br>m4<br>');
-m.write(m4);
+a.m.write(m4);
 document.write('<br><br>');
 
-m.Sum(m1, m2);
+a.m.Sum(m1, m2);
 document.write('m1 + m2:<br>');
-m.write(m1);
+a..write(m1);
 
-var _m5 = m.Multiply(m3, m4);
+var _m5 = a.m.Multiply(m3, m4);
 document.write('<br>m3 @ m4:<br>');
-m.write(_m5);
+a.m.write(_m5);
 
-_m5 = m.Multiply(m4, m3);
+_m5 = a.m.Multiply(m4, m3);
 document.write('<br>m4 @ m3:<br>');
-m.write(_m5);
+a.m.write(_m5);
 
-m.MultiplyConst(_m5, 2);
+a.m.MultiplyConst(_m5, 2);
 document.write('<br>_m5 * 2:<br>');
-m.write(_m5);
+a.m.write(_m5);
 
-m.T2(m1);
+a.m.T2(m1);
 document.write('<br>(m1)T:<br>');
 //v.write(m1);
-m.write(m1);
+a.m.write(m1);
 
-m.T2(m1);
+a.m.T2(m1);
 document.write('<br>(m1)T:<br>');
 //v.write(m1);
-m.write(m1);
+a.m.write(m1);
 */
 
 document.write('<h2>Нейроны</h2>');
@@ -215,7 +213,7 @@ document.write('<h3>Обучение перцептрона</h3>');
 </form>
 
 <script>
-//let M = v.MultiplyScal(v1, v3);
+//let M = a.v.MultiplyScal(v1, v3);
 //alert(M);
 //alert(L1 * L3 * Math.cos(Math.atan2(L1,L3)))
 </script>

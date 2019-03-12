@@ -3,18 +3,7 @@
     Start date: 2019-03-10 05:30
 */
 
-var v = new Vector();
-var m = new Matrix();
-var n = new Neuron();
-
-var neurons = {
-    'perceptron': n.Perceptron,
-    'linear': n.Linear,
-    'sigma': n.Sigma,
-    'tahn': n.Tanh,
-    'relu': n.ReLU,
-    'softplus': n.Softplus
-};
+var a = new Algebra();
 
 function writeLog(text) {
     document.getElementById('form_log').log.value += text;
@@ -36,7 +25,7 @@ function startStudy(btn) {
 
     count_input = 2;
 
-    let w1 = v.create(count_input+1, 'random');
+    let w1 = a.v.create(count_input+1, 'random');
 
     let opts = {
         sets_study: new Sets_Array(x_example, y_example),
@@ -44,7 +33,7 @@ function startStudy(btn) {
         count_input: btn.form.count_input.value,
 
         show_log: btn.form.show_log.checked,
-        neuron: neurons[btn.form.neuron.value],
+        neuron: a.neurons[btn.form.neuron.value],
         func_write_log: writeLog,
         //x_examples: x_example,
         //y_examples: y_example,
@@ -60,7 +49,7 @@ function startStudy(btn) {
     else { writeLog('Обучение не закончилось'); }
 
     writeLog('\nw1: ');
-    v.write(w1, writeLog);
+    a.v.write(w1, writeLog);
     btn.form.result_w1.value = JSON.stringify(w1);
 }
 
@@ -74,7 +63,7 @@ function startUsing(btn) {
         sets_using: new Sets_Array(x),
 
         show_log: btn.form.show_log.checked,
-        neuron: neurons[btn.form.neuron.value],
+        neuron: a.neurons[btn.form.neuron.value],
         func_write_log: writeLog,
         w1: JSON.parse(btn.form.w1.value),
         b: btn.form.b.value

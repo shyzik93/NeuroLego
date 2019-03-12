@@ -151,10 +151,10 @@ function _Matrix() {
 }
 
 /* операции над матрицами  */
-function Matrix() {
+function Matrix(v) {
 
     _Matrix.call(this);
-    this.v = new Vector();
+    this.v = v;//new Vector();
 
     this.check_size = function(m1, m2) {
         if (this.countRows(m1) !== this.countRows(m2)
@@ -270,10 +270,12 @@ function Matrix() {
 
 
 /* Искусственные нейроны */
-function Neuron() {
+function Neuron(v, m) {
 
-    this.v = new Vector();
-    this.m = new Matrix();
+    let self = this;
+
+    self.v = v;//new Vector();
+    self.m = m;//new Matrix();
 
     /* Перцептрон
     * x - вектор входных активаций
@@ -282,28 +284,28 @@ function Neuron() {
     this.Perceptron = function(x1, w1, b) {
         //alert(JSON.stringify([x1, w1, b]));
         x1.push(b);
-        let y1 = v.MultiplyScal(x1, w1); // сумматорная ф-ция
+        let y1 = self.v.MultiplyScal(x1, w1); // сумматорная ф-ция
         if (y1 > 0) {return 1;} else {return 0;} // активационная ф-ция
     }
 
     /* Линейный нейрон */
     this.Linear = function(x1, w1, b) {
         x1.push(b);
-        let y1 = v.MultiplyScal(x1, w1); // сумматорная ф-ция
+        let y1 = self.v.MultiplyScal(x1, w1); // сумматорная ф-ция
         return y1; // активационная ф-ция
     }
 
     /* Нейрон - логистическая функция (сигмоидная) */
     this.Sigma = function(x1, w1, b) {
         x1.push(b);
-        let y1 = v.MultiplyScal(x1, w1); // сумматорная ф-ция
+        let y1 = self.v.MultiplyScal(x1, w1); // сумматорная ф-ция
         return 1 / (1 + Math.pow(Math.E, -y1)); // активационная ф-ция
     }
 
     /* Нейрон - гиперболический тангенс */
     this.Tanh = function(x1, w1, b) {
         x1.push(b);
-        let y1 = v.MultiplyScal(x1, w1); // сумматорная ф-ция
+        let y1 = self.v.MultiplyScal(x1, w1); // сумматорная ф-ция
         //return Math.tanh(y1); // активационная ф-ция
         return (Math.pow(Math.E, y1) - Math.pow(Math.E, -y1)) / (Math.pow(Math.E, y1) + Math.pow(Math.E, -y1)); // активационная ф-ция
     }
@@ -311,16 +313,32 @@ function Neuron() {
     /* Нейрон - улучшенная линейная функция (rectified linear unit*/
     this.ReLU = function(x1, w1, b) {
         x1.push(b);
-        let y1 = v.MultiplyScal(x1, w1); // сумматорная ф-ция
+        let y1 = self.v.MultiplyScal(x1, w1); // сумматорная ф-ция
         return Math.max(y1, 0); // активационная ф-ция
     }
 
     /* Нейрон - softplus */
     this.Softplus = function(x1, w1, b) {
         x1.push(b);
-        let y1 = v.MultiplyScal(x1, w1); // сумматорная ф-ция
+        let y1 = self.v.MultiplyScal(x1, w1); // сумматорная ф-ция
         return Math.log(1 + Math.pow(Math.E, y1)); // активационная ф-ция
     }
+}
+
+function Algebra() {
+    this.v = new Vector();
+    this.m = new Matrix(this.v);
+    this.n = new Neuron(this.v, this.m);
+
+    this.neurons = {
+    'perceptron': this.n.Perceptron,
+    'linear': this.n.Linear,
+    'sigma': this.n.Sigma,
+    'tahn': this.n.Tanh,
+    'relu': this.n.ReLU,
+    'softplus': this.n.Softplus
+    };
+
 }
 
 function StudyOneNeuron(opts, ix_example, v) {
@@ -336,6 +354,7 @@ function StudyOneNeuron(opts, ix_example, v) {
     }
 
     let y1 = opts.neuron(x1_example, opts.w1, opts.b);
+
     if(opts.show_log) opts.func_write_log(' | '+y1);
 
     if (y1 === y1_example) {
@@ -353,7 +372,7 @@ function StudyOneNeuron(opts, ix_example, v) {
 function StudyPerceptron(opts) {
 
     let v = new Vector();
-    let n = new Neuron();
+    let n = new Neuron(v);
 
     // ----------- опции обучения
 
@@ -422,7 +441,7 @@ function UseOneNeuron(opts, ix, v) {
 function UsePerceptron(opts) {
 
     let v = new Vector();
-    let n = new Neuron();
+    let n = new Neuron(v);
 
     // ----------- опции использования
 
