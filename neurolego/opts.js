@@ -12,15 +12,6 @@ function Opts() {
 
         opts.free = {}; // объект свободного назначения, для внутренних нужд
 
-        /* коррекция некоторых опций */
-
-        opts.b = parseInt(opts.b);
-
-        if(action==='use') {
-        } else if (action==='study') {
-            opts.count_era = parseInt(opts.count_era);
-        }
-
         /* обязательные */
 
         if (opts.w1 === undefined) {console.log('Укажите веса'); return;}
@@ -42,5 +33,15 @@ function Opts() {
         } else if (action==='study') {
             if (opts.count_era === undefined) opts.count_era = 50;
         }
+
+        /* коррекция опций. Например, строку в число конвертируем */
+
+        opts.b = parseInt(opts.b);
+
+        if(action==='use') {
+        } else if (action==='study') {
+            opts.count_era = parseInt(opts.count_era);
+        }
+
     }
 }
