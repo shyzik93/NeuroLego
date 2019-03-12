@@ -37,10 +37,8 @@ function startStudy(btn) {
         show_log: btn.form.show_log.checked,
         neuron: s.neurons[btn.form.neuron.value],
         func_write_log: writeLog,
-        //x_examples: x_example,
-        //y_examples: y_example,
-        w1: w1,
-        b: btn.form.b.value
+        w1: w1
+        //b: btn.form.b.value
     }
 
     let t1 = (new Date()).getMilliseconds();
@@ -69,8 +67,8 @@ function startUsing(btn) {
         show_log: btn.form.show_log.checked,
         neuron: u.neurons[btn.form.neuron.value],
         func_write_log: writeLog,
-        w1: JSON.parse(btn.form.w1.value),
-        b: btn.form.b.value
+        w1: JSON.parse(btn.form.w1.value)
+        //b: btn.form.b.value
     }
 
     let t1 = (new Date()).getMilliseconds();
