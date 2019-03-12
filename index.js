@@ -53,7 +53,7 @@ function startStudy(btn) {
     writeLog('\nw1: ');
     s.v.write(w1, writeLog);
 
-    btn.form.w1.value = JSON.stringify(w1);
+    btn.form.w1.value = '[['+JSON.stringify(w1)+']]';
 }
 
 function startUsing(btn) {

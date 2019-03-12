@@ -23,8 +23,8 @@ function Use() {
         // перебираем примеры
         for (let ix=0; ix < opts.sets_using.length; ix++) {
 
-            let layer_y = []; // выходы для слоя
-            let layer_w1; // слой с нейронами
+            let layer_y, layer_w1;
+
             let x = opts.sets_using.get_x_example(ix);
 
             if(opts.show_log) opts.func_write_log('x1: ');
@@ -33,21 +33,30 @@ function Use() {
 
             x.push(opts.b);
 
-            if ((typeof opts.w1[0]) === 'number') { // один нейрон в слое
-                layer_w1 = [opts.w1];
-            } else { layer_w1 = opts.w1; }
+            // перебираем слои
+            for (let il=0;il<opts.w1.length;il++) {
 
-            // перебираем нейроны в слое
-            for (let iw = 0; iw<layer_w1.length; iw++) {
+                if (il > 0) {x = layer_y;x.push(opts.b);}
+
+                layer_y = []; // выходы для слоя
+                layer_w1 = opts.w1[il]; // веса для нейронов в слое
+
+                /*if ((typeof opts.w1[0]) === 'number') { // один нейрон в слое
+                    layer_w1 = [opts.w1];
+                } else { layer_w1 = opts.w1; }*/
+
+                // перебираем нейроны в слое
+                for (let iw = 0; iw<layer_w1.length; iw++) {
                 
-                //let y1 = self.use_one_neuron(opts, x, layer_w1[iw]);
-                let y1 = opts.neuron(x, layer_w1[iw]);
-                if(opts.show_log) opts.func_write_log(' '+y1);
-                layer_y.push(y1);
+                    //let y1 = self.use_one_neuron(opts, x, layer_w1[iw]);
+                    let y1 = opts.neuron(x, layer_w1[iw]);
+                    if(opts.show_log) opts.func_write_log(' '+y1);
+                    layer_y.push(y1);
+                }
+
+                if(opts.show_log) opts.func_write_log('\n');
+
             }
-
-            if(opts.show_log) opts.func_write_log('\n');
-
         }
     }
 
