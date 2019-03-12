@@ -26,7 +26,7 @@ function Study() {
 
         if (y1 === y1_example) {
         } else {
-            opts.count_error += 1;
+            opts.free.count_error += 1;
             if (y1 === 0) {self.v.Sum(opts.w1, x1_example);}
             else {self.v.Diff(opts.w1,x1_example);}
         }
@@ -38,54 +38,29 @@ function Study() {
 
     this.study = function(opts) {
 
-        // ----------- опции обучения
+        self.validate_opts(opts, 'study');
 
-        /* коррекция некоторых опций */
-
-        opts.count_era = parseInt(opts.count_era);
-        opts.b = parseInt(opts.b);
-
-        /* обязательные */
-
-        if (opts.b === undefined) {console.log('Укажите смещение!'); return;}
-        if (opts.w1 === undefined) {console.log('Укажите веса!'); return;}
-        if (opts.sets_study === undefined) {console.log('Укажите обучающие наборы!'); return;}
-
-       /* не обязательные */
-
-        if (opts.count_era === undefined) opts.count_era = 50;
-        if (opts.show_log === undefined) opts.show_log = 1;
-        if (opts.func_write_log === undefined) opts.func_write_log = console.log;
-        if (opts.neuron === undefined) opts.neuron = self.n.Perceptron;
-        //count_input: btn.form.count_input.value;
-
-        // ----------- стартовые значения разных счётчиков
-
-        opts.count_error = -1;
+        opts.free.count_error = -1;
         let era = 1;
 
-        //alert(JSON.stringify(opts));
-
-        // ----------- обучение
-
-        while (opts.count_error !== 0) {
+        while (opts.free.count_error !== 0) {
 
             if (era == opts.count_era+1) { /*alert('Обучение прервано!');*/ break; }
             if (opts.show_log) opts.func_write_log('-------------- Era '+era+'\n\n');
 
-            opts.count_error = 0;
+            opts.free.count_error = 0;
 
             for (let i=0; i < opts.sets_study.length; i++) {
                 let y1 = self.study_one_neuron(opts, i);
             }
 
-           if (opts.count_error === 0) {return 1;}
+           if (opts.free.count_error === 0) {return 1;}
 
            era += 1;
 
         }
 
-        if (opts.count_error === 0) {return 1;} else {return 0;}
+        if (opts.free.count_error === 0) {return 1;} else {return 0;}
 
     }
 

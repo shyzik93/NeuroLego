@@ -25,23 +25,7 @@ function Use() {
 
     this.use = function(opts) {
 
-        // ----------- опции использования
-
-        /* коррекция некоторых опций */
-
-       opts.b = parseInt(opts.b);
-
-        /* обязательные */
-
-        if (opts.w1 === undefined) {console.log('Укажите веса'); return;}
-        if (opts.sets_using === undefined) {console.log('Укажите входные наборы!'); return;}
-
-       /* не обязательные */
-
-        if (opts.b === undefined) opts.b = 1;
-        if (opts.show_log === undefined) opts.show_log = 1;
-        if (opts.func_write_log === undefined) opts.func_write_log = console.log;
-        if (opts.neuron === undefined) opts.neuron = self.n.Perceptron;
+        self.validate_opts(opts, 'use');
 
         for (let i=0; i < opts.sets_using.length; i++) {
             let y1 = self.use_one_neuron(opts, i);
