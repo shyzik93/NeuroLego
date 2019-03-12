@@ -283,28 +283,28 @@ function Neuron(v, m) {
     */
     this.Perceptron = function(x1, w1, b) {
         //alert(JSON.stringify([x1, w1, b]));
-        x1.push(b);
+        if(b !== undefined) x1.push(b);
         let y1 = self.v.MultiplyScal(x1, w1); // сумматорная ф-ция
         if (y1 > 0) {return 1;} else {return 0;} // активационная ф-ция
     }
 
     /* Линейный нейрон */
     this.Linear = function(x1, w1, b) {
-        x1.push(b);
+        if(b !== undefined) x1.push(b);
         let y1 = self.v.MultiplyScal(x1, w1); // сумматорная ф-ция
         return y1; // активационная ф-ция
     }
 
     /* Нейрон - логистическая функция (сигмоидная) */
     this.Sigma = function(x1, w1, b) {
-        x1.push(b);
+        if(b !== undefined) x1.push(b);
         let y1 = self.v.MultiplyScal(x1, w1); // сумматорная ф-ция
         return 1 / (1 + Math.pow(Math.E, -y1)); // активационная ф-ция
     }
 
     /* Нейрон - гиперболический тангенс */
     this.Tanh = function(x1, w1, b) {
-        x1.push(b);
+        if(b !== undefined) x1.push(b);
         let y1 = self.v.MultiplyScal(x1, w1); // сумматорная ф-ция
         //return Math.tanh(y1); // активационная ф-ция
         return (Math.pow(Math.E, y1) - Math.pow(Math.E, -y1)) / (Math.pow(Math.E, y1) + Math.pow(Math.E, -y1)); // активационная ф-ция
@@ -312,14 +312,14 @@ function Neuron(v, m) {
 
     /* Нейрон - улучшенная линейная функция (rectified linear unit*/
     this.ReLU = function(x1, w1, b) {
-        x1.push(b);
+        if(b !== undefined) x1.push(b);
         let y1 = self.v.MultiplyScal(x1, w1); // сумматорная ф-ция
         return Math.max(y1, 0); // активационная ф-ция
     }
 
     /* Нейрон - softplus */
     this.Softplus = function(x1, w1, b) {
-        x1.push(b);
+        if(b !== undefined) x1.push(b);
         let y1 = self.v.MultiplyScal(x1, w1); // сумматорная ф-ция
         return Math.log(1 + Math.pow(Math.E, y1)); // активационная ф-ция
     }
