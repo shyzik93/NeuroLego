@@ -17,8 +17,8 @@ function Opts() {
         opts.b = parseInt(opts.b);
 
         if(action==='use') {
-            opts.count_era = parseInt(opts.count_era);
         } else if (action==='study') {
+            opts.count_era = parseInt(opts.count_era);
         }
 
         /* обязательные */
