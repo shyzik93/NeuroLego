@@ -23,7 +23,6 @@ function Opts() {
 
         /* обязательные */
 
-        if (opts.b === undefined) {console.log('Укажите смещение!'); return;}
         if (opts.w1 === undefined) {console.log('Укажите веса'); return;}
 
         if(action==='use') {
@@ -37,6 +36,7 @@ function Opts() {
         if (opts.show_log === undefined) opts.show_log = 1;
         if (opts.func_write_log === undefined) opts.func_write_log = console.log;
         if (opts.neuron === undefined) opts.neuron = self.n.Perceptron;
+        if (opts.b === undefined) opts.b = 1;
 
         if(action==='use') {
         } else if (action==='study') {
