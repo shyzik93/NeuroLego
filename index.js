@@ -13,8 +13,8 @@ function clearLog() {
 }
 
 function startStudy(btn) {
-    clearLog();
 
+    clearLog();
     let s = new Study();
 
     // ne-or
@@ -36,7 +36,7 @@ function startStudy(btn) {
         count_input: btn.form.count_input.value,
 
         show_log: btn.form.show_log.checked,
-        neuron: a.neurons[btn.form.neuron.value],
+        neuron: s.neurons[btn.form.neuron.value],
         func_write_log: writeLog,
         //x_examples: x_example,
         //y_examples: y_example,
@@ -59,6 +59,7 @@ function startStudy(btn) {
 function startUsing(btn) {
 
     clearLog();
+    let u = new Use();
 
     let x = [[0, 0], [0, 1], [1, 0], [1,1]];
 
@@ -66,14 +67,14 @@ function startUsing(btn) {
         sets_using: new Sets_Array(x),
 
         show_log: btn.form.show_log.checked,
-        neuron: a.neurons[btn.form.neuron.value],
+        neuron: u.neurons[btn.form.neuron.value],
         func_write_log: writeLog,
         w1: JSON.parse(btn.form.w1.value),
         b: btn.form.b.value
     }
 
     let t1 = (new Date()).getMilliseconds();
-    UsePerceptron(opts);
+    u.use(opts);
     let t2 = (new Date()).getMilliseconds();
     writeLog('Прошло секунд: '+ ((t1-t2)/1000)+'\n')
 
