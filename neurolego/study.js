@@ -6,7 +6,7 @@
 function Study() {
     Opts.call(this);
     
-    self = this;
+    let self = this;
 
     this.study_one_neuron = function(opts, ix_example) {
         let x1_example = opts.sets_study.get_x_example(ix_example);
