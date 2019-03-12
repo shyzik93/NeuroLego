@@ -14,6 +14,9 @@ function clearLog() {
 
 function startStudy(btn) {
     clearLog();
+
+    let s = new Study();
+
     // ne-or
     let x_example = [[0, 0], [0, 1], [1, 0], [1,1]];
     let y_example = [1, 1, 1, 0];
@@ -25,7 +28,7 @@ function startStudy(btn) {
 
     count_input = 2;
 
-    let w1 = a.v.create(count_input+1, 'random');
+    let w1 = s.v.create(count_input+1, 'random');
 
     let opts = {
         sets_study: new Sets_Array(x_example, y_example),
@@ -42,14 +45,14 @@ function startStudy(btn) {
     }
 
     let t1 = (new Date()).getMilliseconds();
-    let is_studied = StudyPerceptron(opts);
+    let is_studied = s.study(opts);
     let t2 = (new Date()).getMilliseconds();
     writeLog('Прошло секунд: '+ ((t1-t2)/1000)+'\n');
     if (is_studied) { writeLog('Обучение завершено'); }
     else { writeLog('Обучение не закончилось'); }
 
     writeLog('\nw1: ');
-    a.v.write(w1, writeLog);
+    s.v.write(w1, writeLog);
     btn.form.result_w1.value = JSON.stringify(w1);
 }
 
