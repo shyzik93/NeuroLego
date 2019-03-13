@@ -26,13 +26,29 @@ function startStudy(btn) {
     //let x_example = [[1, 1, 0.3], [1, 0.4, 0.5], [1, 0.7, 0.8]];
     //let y_example = [1, 1, 0];
 
+    // генерируем веса
     let count_input = parseInt(btn.form.count_input.value);
-    let w1 = s.v.create(count_input+1, 'random');
+    let topology = JSON.parse(btn.form.topology.value);
+    let w1 = [];
+    let _count_input;
+
+    for (let il=0; il<topology.length;il++) {
+        w1[il] = [];
+
+        // количество входов нейрона равно количеству нейронов в предыдущем слое
+        if (il === 0) _count_input = count_input;
+        else _count_input = topology[il-1]
+
+        for (let j=0;j<topology[il];j++) {
+            w1[il][j] = s.v.create(_count_input+1, 'random');
+        }
+    }
 
     let opts = {
         sets_study: new Sets_Array(x_example, y_example),
         count_era: btn.form.count_era.value,
         count_input: count_input,
+        topology: topology,
 
         show_log: btn.form.show_log.checked,
         neuron: s.neurons[btn.form.neuron.value],
@@ -51,7 +67,7 @@ function startStudy(btn) {
     writeLog('\nw1: ');
     s.v.write(w1, writeLog);
 
-    btn.form.w1.value = '[['+JSON.stringify(w1)+']]';
+    btn.form.w1.value = JSON.stringify(w1);
 }
 
 function startUsing(btn) {

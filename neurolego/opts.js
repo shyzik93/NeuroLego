@@ -20,6 +20,7 @@ function Opts() {
             if (opts.sets_using === undefined) {console.log('Укажите входные наборы!'); return;}
         } else if (action==='study') {
             if (opts.sets_study === undefined) {console.log('Укажите обучающие наборы!'); return;}
+            if (opts.topology === undefined) {console.log('Укажите кол-во нейронов в слоях!'); return;}
         }
 
        /* не обязательные */
