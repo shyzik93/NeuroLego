@@ -49,6 +49,7 @@ function startStudy(btn) {
         count_era: btn.form.count_era.value,
         count_input: count_input,
         topology: topology,
+        show_log_era_in_step: btn.form.show_log_era_in_step.value,
 
         show_log: btn.form.show_log.checked,
         neuron: s.neurons[btn.form.neuron.value],

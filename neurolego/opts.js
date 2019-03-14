@@ -33,6 +33,7 @@ function Opts() {
         if(action==='use') {
         } else if (action==='study') {
             if (opts.count_era === undefined) opts.count_era = 50;
+            if (opts.show_log_era_in_step === undefined) opts.show_log_era_in_step = 1;
         }
 
         /* коррекция опций. Например, строку в число конвертируем */
@@ -42,6 +43,7 @@ function Opts() {
         if(action==='use') {
         } else if (action==='study') {
             opts.count_era = parseInt(opts.count_era);
+            opts.show_log_era_in_step = parseInt(opts.show_log_era_in_step);
         }
 
     }

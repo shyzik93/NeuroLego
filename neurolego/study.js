@@ -26,7 +26,7 @@ function Study() {
         while (opts.free.count_error !== 0) {
 
             if (era == opts.count_era+1) { /*alert('Обучение прервано!');*/ break; }
-            if (opts.show_log) opts.func_write_log('-------------- Era '+era+'\n\n');
+            if (opts.show_log & era%opts.show_log_era_in_step===0) opts.func_write_log('-------------- Era '+era+'\n\n');
 
             opts.free.count_error = 0;
             let error, delta, errors, error_era=0; // суммарная величина ошибки на всех примерах
@@ -54,7 +54,7 @@ function Study() {
                     for (let j=0;j<opts.w1[il].length;j++) {
                         w1 = opts.w1[il][j];
 
-                        if (opts.show_log & il===opts.w1.length-1 & era%20===0) {
+                        if (opts.show_log & il===opts.w1.length-1 & era%opts.show_log_era_in_step===0) {
                             opts.func_write_log('x1_example: ');
                             self.v.write(x1_example, opts.func_write_log);
                             opts.func_write_log(' | '+y1_example+'\n');
@@ -65,7 +65,7 @@ function Study() {
                         let y1 = self.study_one_neuron(opts, il, j, _x1_example, y1_example, w1);
                         y[il].push(y1);
 
-                        if(opts.show_log & il===opts.w1.length-1 & era%20===0){
+                        if(opts.show_log & il===opts.w1.length-1 & era%opts.show_log_era_in_step===0){
                             opts.func_write_log(' | '+y1+'\n\n');
                         }
 
