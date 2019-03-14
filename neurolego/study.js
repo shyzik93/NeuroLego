@@ -8,20 +8,20 @@ function Study() {
     
     let self = this;
 
-    this.calcError = function(opts, y, y1_example, errors) {
-        for (let il=opts.w1.length-1;il>=0;il--) {
+    this.calcError = function(opts, Y_real, sY_ideal, errors) {
+        for (let il=opts.W.length-1;il>=0;il--) {
 
-            for (let j=0;j<opts.w1[il].length;j++) {
+            for (let j=0;j<opts.W[il].length;j++) {
                  if(!errors[il]) {errors[il] = [];}
 
-                 if (il === opts.w1.length-1) {
-                     //error = y[il][j] - y1_example[j];
-                     error = y[il][0] - y1_example;
-                     //delta = error * opts.neuron(y[il][j], true);
-                     delta = error * opts.neuron(y[il][0], true);
+                 if (il === opts.W.length-1) {
+                     //error = Y_real[il][j] - sY_ideal[j];
+                     error = Y_real[il][0] - sY_ideal;
+                     //delta = error * opts.neuron(Y_real[il][j], true);
+                     delta = error * opts.neuron(Y_real[il][0], true);
                  } else {
-                     error = self.v.MultiplyScalConst(opts.w1[il][j], errors[il+1][0].delta);
-                     delta = error * opts.neuron(y[il][j], true);
+                     error = self.v.MultiplyScalConst(opts.W[il][j], errors[il+1][0].delta);
+                     delta = error * opts.neuron(Y_real[il][j], true);
                      error_era += error;
                  }
 
@@ -32,47 +32,38 @@ function Study() {
        //alert(JSON.stringify(errors)); exit();
     }
 
-    this.studySimple = function(opts, y, y_example) {
-        if (y[y.length-1][0] === y1_example) {
+    this.studySimple = function(opts, Y_real, sY_ideal, X) {
+        if (Y_real[Y_real.length-1][0] === sY_ideal) {
         } else {
             opts.free.count_error += 1;
-            for (let il=0;il<opts.w1.length-1;il++) {
+            for (let il=0;il<opts.W.length;il++) {
 
-                let _w1;
-                if (il===0) _w1 = x1_example;
-                else {_w1 = y[il-1].slice(); _w1.push(opts.b);}
+                let _nW;
+                if (il===0) _nW = X;
+                else {_nW = Y_real[il-1].slice(); _nW.push(opts.b);}
 
-                 for (let j=0;j<opts.w1[il].length;j++) {
-
-                      if (y[y.length-1][0] === 0) {self.v.Sum(opts.w1[il][j], _w1);}
-                      else {self.v.Diff(opts.w1[il][j], _w1);}
+                 for (let j=0;j<opts.W[il].length;j++) {
+                      if (Y_real[Y_real.length-1][0] === 0) {self.v.Sum(opts.W[il][j], _nW);}
+                      else {self.v.Diff(opts.W[il][j], _nW);}
                  }
             }
         }
     }
 
-    this.studyBackpropag = function(opts, y, y1_example, errors) {
-            if (y[y.length-1][0] !== y1_example) opts.free.count_error += 1;
-            for (let il=0;il<opts.w1.length-1;il++) {
-                let _y = y[il].slice();
+    this.studyBackpropag = function(opts, Y_real, sY_ideal, errors) {
+            if (Y_real[Y_real.length-1][0] !== sY_ideal) opts.free.count_error += 1;
+            for (let il=0;il<opts.W.length-1;il++) {
+                let sY_real = Y_real[il].slice();
                 let _d = 0;
-                _y.push(1);
+                sY_real.push(1);
                 for (let ie=0; ie<errors[il+1].length;ie++) {_d+=errors[il+1][ie].delta;}
-                self.v.MultiplyVectConst(_y, _d*10);
+                self.v.MultiplyVectConst(sY_real, _d*10);
 
-                for (let j=0;j<opts.w1[il].length;j++) {
-                    //alert(JSON.stringify([opts.w1[il][j], _y]));
-                    self.v.Diff(opts.w1[il][j], _y);
+                for (let j=0;j<opts.W[il].length;j++) {
+                    //alert(JSON.stringify([opts.W[il][j], sY_real]));
+                    self.v.Diff(opts.W[il][j], sY_real);
                 }
             }
-    }
-
-    this.study_one_neuron = function(opts, i_layer, i_neuron, x1_example, y1_example, w1) {
-
-        let _y1 = self.n.sum(x1_example, w1);
-        let y1 = opts.neuron(_y1);
-
-        return y1;
     }
 
     this.study = function(opts) {
@@ -90,60 +81,61 @@ function Study() {
             opts.free.count_error = 0;
             let error, delta, errors, error_era=0; // суммарная величина ошибки на всех примерах
 
-            let y = []; // выходы слоя
+            let Y_real = [];
 
             // перебираем примеры
             for (let i=0; i < opts.sets_study.length; i++) {
 
-                let x1_example = opts.sets_study.get_x_example(i);
-                let y1_example = opts.sets_study.get_y_example(i);
-                let w1; // весы нейрона
-                let _x1_example; // либо пример, либо выход слоя
-                x1_example.push(opts.b);
+                let X = opts.sets_study.get_x_example(i);
+                let sY_ideal = opts.sets_study.get_y_example(i);
+                let nW;
+                let _X; // либо пример, либо выход слоя
+                X.push(opts.b);
 
                 // перебираем слои
-                for (let il=0;il<opts.w1.length;il++) {
+                for (let il=0;il<opts.W.length;il++) {
 
-                     y[il] = [];
+                     Y_real[il] = [];
 
-                     if (il === 0) _x1_example = x1_example;
-                     else {_x1_example = y[il-1].slice(); _x1_example.push(1);}
+                     if (il === 0) _X = X;
+                     else {_X = Y_real[il-1].slice(); _X.push(1);}
 
                     // перебираем нейроны
-                    for (let j=0;j<opts.w1[il].length;j++) {
-                        w1 = opts.w1[il][j];
+                    for (let j=0;j<opts.W[il].length;j++) {
+                        nW = opts.W[il][j];
 
-                        if (opts.show_log & il===opts.w1.length-1 & era%opts.show_log_era_in_step===0) {
-                            opts.func_write_log('x1_example: ');
-                            self.v.write(x1_example, opts.func_write_log);
-                            opts.func_write_log(' | '+y1_example+'\n');
-                            //opts.func_write_log('w1: ');
-                            //self.v.write(w1, opts.func_write_log);
+                        if (opts.show_log & il===opts.W.length-1 & era%opts.show_log_era_in_step===0) {
+                            opts.func_write_log('X: ');
+                            self.v.write(X, opts.func_write_log);
+                            opts.func_write_log(' | '+sY_ideal+'\n');
+                            opts.func_write_log('nW: ');
+                            self.v.write(nW, opts.func_write_log);
                         }
 
-                        let y1 = self.study_one_neuron(opts, il, j, _x1_example, y1_example, w1);
-                        y[il].push(y1);
+                        let _nY_real = self.n.sum(_X, nW);
+                        let nY_real = opts.neuron(_nY_real);
+                        Y_real[il].push(nY_real);
 
-                        if(opts.show_log & il===opts.w1.length-1 & era%opts.show_log_era_in_step===0){
-                            opts.func_write_log(' | '+y1+'\n\n');
+                        if(opts.show_log & il===opts.W.length-1 & era%opts.show_log_era_in_step===0){
+                            opts.func_write_log(' | '+nY_real+'\n\n');
                         }
 
                     }
                 }
 
-//alert(JSON.stringify(y))
+//alert(JSON.stringify(Y_real))
 
                 // проверяем правильность выхода после последнего слоя
                 errors = [];
-                this.calcError(opts, y, y1_example, errors);
+                //self.calcError(opts, Y_real, sY_ideal, errors);
 
                 // обучение
-                //this.studySimple(opts, y, y_example);
-                this.studyBackpropag(opts, y, y1_example, errors);
+                self.studySimple(opts, Y_real, sY_ideal, X);
+                //self.studyBackpropag(opts, Y_real, sY_ideal, errors);
 
             }
 
-           //opts.func_write_log(y[y.length-1][0]+' ' +'  ' +error_era+'\n');
+           //opts.func_write_log(Y_real[Y_real.length-1][0]+' ' +'  ' +error_era+'\n');
            //if (error_era <= 0) {return 1;}
            if (opts.free.count_error === 0) {return 1;}
 

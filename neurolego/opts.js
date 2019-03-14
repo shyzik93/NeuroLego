@@ -14,7 +14,7 @@ function Opts() {
 
         /* обязательные */
 
-        if (opts.w1 === undefined) {console.log('Укажите веса'); return;}
+        if (opts.W === undefined) {console.log('Укажите веса'); return;}
 
         if(action==='use') {
             if (opts.sets_using === undefined) {console.log('Укажите входные наборы!'); return;}

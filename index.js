@@ -18,8 +18,8 @@ function startStudy(btn) {
     let s = new Study();
 
     // ne-or
-    let x_example = JSON.parse(btn.form.x.value);
-    let y_example = JSON.parse(btn.form.y.value);
+    let Xs = JSON.parse(btn.form.Xs.value);
+    let sYs_ideal = JSON.parse(btn.form.sYs_ideal.value);
     // xor
     //let x_example = [[1, 0, 0], [1, 0, 1], [1, 1, 0], [1,1,1]];
     //let y_example = [0, 1, 1, 0];
@@ -29,23 +29,23 @@ function startStudy(btn) {
     // генерируем веса
     let count_input = parseInt(btn.form.count_input.value);
     let topology = JSON.parse(btn.form.topology.value);
-    let w1 = [];
+    let W = [];
     let _count_input;
 
     for (let il=0; il<topology.length;il++) {
-        w1[il] = [];
+        W[il] = [];
 
         // количество входов нейрона равно количеству нейронов в предыдущем слое
         if (il === 0) _count_input = count_input;
         else _count_input = topology[il-1]
 
         for (let j=0;j<topology[il];j++) {
-            w1[il][j] = s.v.create(_count_input+1, 'random');
+            W[il][j] = s.v.create(_count_input+1, 'random');
         }
     }
 
     let opts = {
-        sets_study: new Sets_Array(x_example, y_example),
+        sets_study: new Sets_Array(Xs, sYs_ideal),
         count_era: btn.form.count_era.value,
         count_input: count_input,
         topology: topology,
@@ -54,7 +54,7 @@ function startStudy(btn) {
         show_log: btn.form.show_log.checked,
         neuron: s.neurons[btn.form.neuron.value],
         func_write_log: writeLog,
-        w1: w1
+        W: W
         //b: btn.form.b.value
     }
 
@@ -66,9 +66,9 @@ function startStudy(btn) {
     else { writeLog('Обучение не закончилось'); }
 
     writeLog('\nw1: ');
-    s.v.write(w1, writeLog);
+    s.v.write(W, writeLog);
 
-    btn.form.w1.value = JSON.stringify(w1);
+    btn.form.W.value = JSON.stringify(W);
 }
 
 function startUsing(btn) {
@@ -76,15 +76,15 @@ function startUsing(btn) {
     clearLog();
     let u = new Use();
 
-    let x = JSON.parse(btn.form.x.value);
+    let Xs = JSON.parse(btn.form.Xs.value);
 
     let opts = {
-        sets_using: new Sets_Array(x),
+        sets_using: new Sets_Array(Xs),
 
         show_log: btn.form.show_log.checked,
         neuron: u.neurons[btn.form.neuron.value],
         func_write_log: writeLog,
-        w1: JSON.parse(btn.form.w1.value)
+        W: JSON.parse(btn.form.W.value)
         //b: btn.form.b.value
     }
 
@@ -97,10 +97,10 @@ function startUsing(btn) {
 
 function copyW1(btn) {
     let form_study = document.getElementById('form_study');
-    let w1 = form_study.w1.value;
-    if (w1 === '') {
+    let W = form_study.W.value;
+    if (W === '') {
         alert('Результатов весов нет! Возможно, обучения ещё не происходило.');
         return;
     }
-    btn.form.w1.value = w1;
+    btn.form.W.value = W;
 }
