@@ -54,7 +54,8 @@ function Use() {
                 for (let iw = 0; iw<layer_w1.length; iw++) {
                 
                     //let y1 = self.use_one_neuron(opts, x, layer_w1[iw]);
-                    let y1 = opts.neuron(x, layer_w1[iw]);
+                    let _y1 = self.n.sum(x, layer_w1[iw]);
+                    let y1 = opts.neuron(_y1);
                     if(opts.show_log) opts.func_write_log(' '+y1);
                     layer_y.push(y1);
                 }

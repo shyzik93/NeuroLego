@@ -16,12 +16,6 @@ function Vector(func_write_log) {
         }
     }
 
-    /* умножение вектора на константу ( v1 * c )*/
-    this.MultiplyConst = function(v1, c, offset) {
-        if (offset === undefined) offset = 0;
-        for (let i=0; i < v1.length-offset; i++) v1[i] = v1[i] * c;
-    }
-
     /* сложение векторов ( v1 + v2 ) */
     this.Sum = function(v1, v2, offset) {
         if (offset === undefined) offset = 0;
@@ -49,6 +43,13 @@ function Vector(func_write_log) {
         return Math.sqrt(sum);
     }
 
+    /* скалярное произведение вектора на число ( v1 * c )*/
+    this.MultiplyScalConst = function(v1, c) {
+        let sum = 0;
+        for (let i=0; i < v1.length; i++) sum += v1[i] * c;
+        return sum;
+    }
+
     /* скалярное произведение векторов ( v1 * v2 )*/
     this.MultiplyScal = function(v1, v2) {
         this.check_size(v1, v2);
@@ -63,6 +64,11 @@ function Vector(func_write_log) {
         for (let i=0; i < v1.length; i++) v1[i] = v1[i] * v2[i];
     }
 
+    /* векторное умножение вектора на число ( v1 * c )*/
+    this.MultiplyVectConst = function(v1, c, offset) {
+        if (offset === undefined) offset = 0;
+        for (let i=0; i < v1.length-offset; i++) v1[i] = v1[i] * c;
+    }
 
     /* генерация вектора
      * n - размерность вектора, content - заполнитель
@@ -178,7 +184,7 @@ function Matrix(v) {
 
     /* умножение матрицы на константу ( m1 * c )*/
     this.MultiplyConst = function(m1, c) {
-        this.v.MultiplyConst(m1, c, this.offset);
+        this.v.MultiplyVectConst(m1, c, this.offset);
     }
 
     /* умножение матриц ( m1 @ m2 ) */
@@ -277,50 +283,46 @@ function Neuron(v, m) {
     self.v = v;//new Vector();
     self.m = m;//new Matrix();
 
+    /* сумматорная функция */
+    this.sum = function(x1, w1, b) {
+        if(b !== undefined) x1.push(b);
+        return self.v.MultiplyScal(x1, w1);
+    }
+
     /* Перцептрон
     * x - вектор входных активаций
     * w - вектор весов
     */
-    this.Perceptron = function(x1, w1, b) {
+    this.Perceptron = function(y1, derive) {
         //alert(JSON.stringify([x1, w1, b]));
-        if(b !== undefined) x1.push(b);
-        let y1 = self.v.MultiplyScal(x1, w1); // сумматорная ф-ция
+        //if (derive) y1;
         if (y1 > 0) {return 1;} else {return 0;} // активационная ф-ция
     }
 
     /* Линейный нейрон */
-    this.Linear = function(x1, w1, b) {
-        if(b !== undefined) x1.push(b);
-        let y1 = self.v.MultiplyScal(x1, w1); // сумматорная ф-ция
+    this.Linear = function(y1) {
         return y1; // активационная ф-ция
     }
 
     /* Нейрон - логистическая функция (сигмоидная) */
-    this.Sigma = function(x1, w1, b) {
-        if(b !== undefined) x1.push(b);
-        let y1 = self.v.MultiplyScal(x1, w1); // сумматорная ф-ция
+    this.Sigma = function(y1, derive) {
+        if (derive) return y1 * (1-y1);
         return 1 / (1 + Math.pow(Math.E, -y1)); // активационная ф-ция
     }
 
     /* Нейрон - гиперболический тангенс */
-    this.Tanh = function(x1, w1, b) {
-        if(b !== undefined) x1.push(b);
-        let y1 = self.v.MultiplyScal(x1, w1); // сумматорная ф-ция
+    this.Tanh = function(y1) {
         //return Math.tanh(y1); // активационная ф-ция
         return (Math.pow(Math.E, y1) - Math.pow(Math.E, -y1)) / (Math.pow(Math.E, y1) + Math.pow(Math.E, -y1)); // активационная ф-ция
     }
 
     /* Нейрон - улучшенная линейная функция (rectified linear unit*/
-    this.ReLU = function(x1, w1, b) {
-        if(b !== undefined) x1.push(b);
-        let y1 = self.v.MultiplyScal(x1, w1); // сумматорная ф-ция
+    this.ReLU = function(y1) {
         return Math.max(y1, 0); // активационная ф-ция
     }
 
     /* Нейрон - softplus */
-    this.Softplus = function(x1, w1, b) {
-        if(b !== undefined) x1.push(b);
-        let y1 = self.v.MultiplyScal(x1, w1); // сумматорная ф-ция
+    this.Softplus = function(y1) {
         return Math.log(1 + Math.pow(Math.E, y1)); // активационная ф-ция
     }
 }
