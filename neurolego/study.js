@@ -8,6 +8,65 @@ function Study() {
     
     let self = this;
 
+    this.calcError = function(opts, y, y1_example, errors) {
+        for (let il=opts.w1.length-1;il>=0;il--) {
+
+            for (let j=0;j<opts.w1[il].length;j++) {
+                 if(!errors[il]) {errors[il] = [];}
+
+                 if (il === opts.w1.length-1) {
+                     //error = y[il][j] - y1_example[j];
+                     error = y[il][0] - y1_example;
+                     //delta = error * opts.neuron(y[il][j], true);
+                     delta = error * opts.neuron(y[il][0], true);
+                 } else {
+                     error = self.v.MultiplyScalConst(opts.w1[il][j], errors[il+1][0].delta);
+                     delta = error * opts.neuron(y[il][j], true);
+                     error_era += error;
+                 }
+
+                 errors[il][j] = {error:error, delta:delta};
+            }
+        }
+
+       //alert(JSON.stringify(errors)); exit();
+    }
+
+    this.studySimple = function(opts, y, y_example) {
+        if (y[y.length-1][0] === y1_example) {
+        } else {
+            opts.free.count_error += 1;
+            for (let il=0;il<opts.w1.length-1;il++) {
+
+                let _w1;
+                if (il===0) _w1 = x1_example;
+                else {_w1 = y[il-1].slice(); _w1.push(opts.b);}
+
+                 for (let j=0;j<opts.w1[il].length;j++) {
+
+                      if (y[y.length-1][0] === 0) {self.v.Sum(opts.w1[il][j], _w1);}
+                      else {self.v.Diff(opts.w1[il][j], _w1);}
+                 }
+            }
+        }
+    }
+
+    this.studyBackpropag = function(opts, y, y1_example, errors) {
+            if (y[y.length-1][0] !== y1_example) opts.free.count_error += 1;
+            for (let il=0;il<opts.w1.length-1;il++) {
+                let _y = y[il].slice();
+                let _d = 0;
+                _y.push(1);
+                for (let ie=0; ie<errors[il+1].length;ie++) {_d+=errors[il+1][ie].delta;}
+                self.v.MultiplyVectConst(_y, _d*10);
+
+                for (let j=0;j<opts.w1[il].length;j++) {
+                    //alert(JSON.stringify([opts.w1[il][j], _y]));
+                    self.v.Diff(opts.w1[il][j], _y);
+                }
+            }
+    }
+
     this.study_one_neuron = function(opts, i_layer, i_neuron, x1_example, y1_example, w1) {
 
         let _y1 = self.n.sum(x1_example, w1);
@@ -76,66 +135,11 @@ function Study() {
 
                 // проверяем правильность выхода после последнего слоя
                 errors = [];
+                this.calcError(opts, y, y1_example, errors);
 
-                for (let il=opts.w1.length-1;il>=0;il--) {
-
-                    for (let j=0;j<opts.w1[il].length;j++) {
-                         if(!errors[il]) {errors[il] = [];}
-
-                         if (il === opts.w1.length-1) {
-                             //error = y[il][j] - y1_example[j];
-                             error = y[il][0] - y1_example;
-                             //delta = error * opts.neuron(y[il][j], true);
-                             delta = error * opts.neuron(y[il][0], true);
-                         } else {
-                             error = self.v.MultiplyScalConst(opts.w1[il][j], errors[il+1][0].delta);
-                             delta = error * opts.neuron(y[il][j], true);
-                             error_era += error;
-                         }
-
-                         errors[il][j] = {error:error, delta:delta};
-                    }
-                }
-
-               //alert(JSON.stringify(errors)); exit();
-
-                //  ------------------
-
-                /*if (y[y.length-1][0] === y1_example) {
-                } else {
-                    opts.free.count_error += 1;
-                    for (let il=0;il<opts.w1.length-1;il++) {
-
-                        let _w1;
-                        if (il===0) _w1 = x1_example;
-                        else {_w1 = y[il-1].slice(); _w1.push(opts.b);}
-
-                        for (let j=0;j<opts.w1[il].length;j++) {
-
-                            if (y[y.length-1][0] === 0) {self.v.Sum(opts.w1[il][j], _w1);}
-                            else {self.v.Diff(opts.w1[il][j], _w1);}
-                        }
-                    }
-                }*/
-
-// --------------------
-
-                    if (y[y.length-1][0] !== y1_example) opts.free.count_error += 1;
-                    for (let il=0;il<opts.w1.length-1;il++) {
-
-let _y = y[il].slice();
-let _d = 0;
-_y.push(1);
-for (let ie=0; ie<errors[il+1].length;ie++) {_d+=errors[il+1][ie].delta;}
-self.v.MultiplyVectConst(_y, _d*10);
-
-                        for (let j=0;j<opts.w1[il].length;j++) {
-       //alert(JSON.stringify([opts.w1[il][j], _y]));
-                            self.v.Diff(opts.w1[il][j], _y);
-                        }
-                    }
-
-//   --------------------------------
+                // обучение
+                //this.studySimple(opts, y, y_example);
+                this.studyBackpropag(opts, y, y1_example, errors);
 
             }
 
