@@ -32,20 +32,25 @@ function Study() {
        //alert(JSON.stringify(errors)); exit();
     }
 
+    this.studyDelta = function() {
+    }
+
+    /* Хебба */
     this.studySimple = function(opts, Y_real, sY_ideal, X) {
         if (Y_real[Y_real.length-1][0] === sY_ideal) {
         } else {
             opts.free.count_error += 1;
             for (let il=0;il<opts.W.length;il++) {
 
-                let _nW;
+                let _nW=X;
                 if (il===0) _nW = X;
-                else {_nW = Y_real[il-1].slice(); _nW.push(opts.b);}
+                else {_nW = Y_real[il-1].slice();  _nW.push(opts.b);}
 
                  for (let j=0;j<opts.W[il].length;j++) {
                       if (Y_real[Y_real.length-1][0] === 0) {self.v.Sum(opts.W[il][j], _nW);}
                       else {self.v.Diff(opts.W[il][j], _nW);}
                  }
+
             }
         }
     }
@@ -86,6 +91,8 @@ function Study() {
             // перебираем примеры
             for (let i=0; i < opts.sets_study.length; i++) {
 
+                //let i = self.getRandomInt(0, opts.sets_study.length);
+
                 let X = opts.sets_study.get_x_example(i);
                 let sY_ideal = opts.sets_study.get_y_example(i);
                 let nW;
@@ -107,8 +114,7 @@ function Study() {
                         if (opts.show_log & il===opts.W.length-1 & era%opts.show_log_era_in_step===0) {
                             opts.func_write_log('X: ');
                             self.v.write(X, opts.func_write_log);
-                            opts.func_write_log(' | '+sY_ideal+'\n');
-                            opts.func_write_log('nW: ');
+                            opts.func_write_log(' | '+sY_ideal+'\nnW: ');
                             self.v.write(nW, opts.func_write_log);
                         }
 

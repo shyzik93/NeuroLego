@@ -8,14 +8,6 @@ function Use() {
 
     let self = this;
 
-    /*this.use_one_neuron = function(opts, X, nW) {
-        //if(opts.show_log) opts.func_write_log(' ');
-
-        let nY_real = opts.neuron(X, nW);
-
-        return nY_real;
-    }*/
-
     this.use = function(opts) {
 
         self.validate_opts(opts, 'use');
@@ -46,14 +38,8 @@ function Use() {
                 sY_real = []; // выходы для слоя
                 sW = opts.W[il]; // веса для нейронов в слое
 
-                /*if ((typeof opts.W[0]) === 'number') { // один нейрон в слое
-                    sW = [opts.W];
-                } else { sW = opts.W; }*/
-
                 // перебираем нейроны в слое
                 for (let iw = 0; iw<sW.length; iw++) {
-                
-                    //let nY = self.use_one_neuron(opts, X, sW[iw]);
                     let _nY_real = self.n.sum(X, sW[iw]);
                     let nY_real = opts.neuron(_nY_real);
                     if(opts.show_log) opts.func_write_log(' '+nY_real);
