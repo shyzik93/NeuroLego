@@ -46,6 +46,7 @@ function startStudy(btn) {
 
     let opts = {
         sets_study: new Sets_Array(Xs, sYs_ideal),
+        speed_study: btn.form.speed_study.value,
         count_era: btn.form.count_era.value,
         count_input: count_input,
         topology: topology,
@@ -103,4 +104,19 @@ function copyW1(btn) {
         return;
     }
     btn.form.W.value = W;
+}
+
+function calcCountInput(field) {
+    let Xs;
+    try {
+        Xs = JSON.parse(field.value);
+    } catch {
+        alert("Синтаксическая ошибка в примерах (x)!");
+        return;
+    }
+
+    if (Xs.length > 0) {
+        field.form.count_input.value = Xs[0].length;
+    }
+
 }

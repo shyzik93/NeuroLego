@@ -203,7 +203,7 @@ document.write('<h3>Обучение</h3>');
    <div class="examples">
         <div class="x">
             Входные данные (x):<br>
-            <textarea name="Xs">[[0, 0], [0, 1], [1, 0], [1,1]]</textarea>
+            <textarea name="Xs" onchange="calcCountInput(this)">[[0, 0], [0, 1], [1, 0], [1,1]]</textarea>
         </div><div class="y">
             Результат (y):<br>
             <textarea name="sYs_ideal">[[0], [1], [1], [0]]</textarea>
@@ -216,7 +216,9 @@ document.write('<h3>Обучение</h3>');
     <br>
     Число входов: <input type="input" name="count_input" value="2">
     <br>
-    Число эпох: <input type="input" name="count_era" value="50">
+    Число эпох: <input type="input" name="count_era" value="50" size="6">
+    <br>
+    Скорость обучения: <input type="input" name="speed_study" value="1" size="6">
     <br>
 
     <input type="button" onclick="startStudy(this)" value="Начать обучение">

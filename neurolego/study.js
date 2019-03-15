@@ -34,7 +34,7 @@ function Study() {
 
     /* Дельта-правило. Для одного нейрона с выходом и входом от 0. до 1.0 */
     this.studyDelta = function(opts, Y_real, sY_ideal, X) {
-        let delta = (sY_ideal[0] - Y_real[Y_real.length-1][0])*0.0001;
+        let delta = (sY_ideal[0] - Y_real[Y_real.length-1][0]) * opts.speed_study;
 
         if (delta !== 0) opts.free.count_error += 1;
 
@@ -67,6 +67,8 @@ function Study() {
                 let _nW=X;
                 if (il===0) _nW = X;
                 else {_nW = Y_real[il-1].slice();  _nW.push(opts.b);}
+
+                self.v.MultiplyVectConst(_nW, opts.study);
 
                  for (let j=0;j<opts.W[il].length;j++) {
                       if (Y_real[Y_real.length-1][0] === 0) {

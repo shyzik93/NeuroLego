@@ -21,6 +21,7 @@ function Opts() {
         } else if (action==='study') {
             if (opts.sets_study === undefined) {console.log('Укажите обучающие наборы!'); return;}
             if (opts.topology === undefined) {console.log('Укажите кол-во нейронов в слоях!'); return;}
+            if (opts.speed_study === undefined) {console.log('Укажите скорость обучения!'); return;}
         }
 
        /* не обязательные */
@@ -43,6 +44,7 @@ function Opts() {
         if(action==='use') {
         } else if (action==='study') {
             opts.count_era = parseInt(opts.count_era);
+            opts.speed_study = parseFloat(opts.speed_study);
             opts.show_log_era_in_step = parseInt(opts.show_log_era_in_step);
         }
 
