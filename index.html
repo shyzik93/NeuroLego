@@ -66,11 +66,11 @@ form .examples > .y {
     width: 38%;
 }
 
-form .examples textarea[name="x"] {
+form .examples textarea[name="Xs"] {
     width: 98%;
     height: 125px;
 }
-form .examples textarea[name="y"] {
+form .examples textarea[name="sYs_ideal"], form .examples textarea[name="sYs_real"] {
     width: 98%;
     height: 125px;
 }
@@ -206,7 +206,7 @@ document.write('<h3>Обучение</h3>');
             <textarea name="Xs">[[0, 0], [0, 1], [1, 0], [1,1]]</textarea>
         </div><div class="y">
             Результат (y):<br>
-            <textarea name="sYs_ideal">[0, 1, 1, 0]</textarea>
+            <textarea name="sYs_ideal">[[0], [1], [1], [0]]</textarea>
         </div>
     <div>
     Веса (w): <input type="input" name="W" disabled>

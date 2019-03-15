@@ -15,10 +15,10 @@ function Study() {
                  if(!errors[il]) {errors[il] = [];}
 
                  if (il === opts.W.length-1) {
-                     //error = Y_real[il][j] - sY_ideal[j];
-                     error = Y_real[il][0] - sY_ideal;
-                     //delta = error * opts.neuron(Y_real[il][j], true);
-                     delta = error * opts.neuron(Y_real[il][0], true);
+                     error = Y_real[il][j] - sY_ideal[j];
+                     //error = Y_real[il][0] - sY_ideal;
+                     delta = error * opts.neuron(Y_real[il][j], true);
+                     //delta = error * opts.neuron(Y_real[il][0], true);
                  } else {
                      error = self.v.MultiplyScalConst(opts.W[il][j], errors[il+1][0].delta);
                      delta = error * opts.neuron(Y_real[il][j], true);
@@ -33,13 +33,33 @@ function Study() {
     }
 
     /* Дельта-правило. Для одного нейрона с выходом и входом от 0. до 1.0 */
-    this.studyDelta = function() {
-        
+    this.studyDelta = function(opts, Y_real, sY_ideal, X) {
+        let delta = (sY_ideal[0] - Y_real[Y_real.length-1][0])*0.0001;
+
+        if (delta !== 0) opts.free.count_error += 1;
+
+        for (let il=0;il<opts.W.length;il++) {
+
+            let _nW=X;
+            if (il===0) _nW = X;
+            else {_nW = Y_real[il-1].slice();  _nW.push(opts.b); }
+
+            self.v.MultiplyVectConst(_nW, delta);
+
+             for (let j=0;j<opts.W[il].length;j++) {
+                  
+                  //if (Y_real[Y_real.length-1][0] === 0) {
+                  self.v.Sum(opts.W[il][j], _nW);
+                  //} else {
+                  //    self.v.Diff(opts.W[il][j], _nW);
+                  //}
+             }
+        }
     }
 
     /* Правила Хебба. Идеально для одного бинарного нейрона (1 и 0). Для двух слоёв срабатывает не всегда.*/
     this.studySimple = function(opts, Y_real, sY_ideal, X) {
-        if (Y_real[Y_real.length-1][0] === sY_ideal) {
+        if (self.v.IsEq(Y_real[Y_real.length-1], sY_ideal)) {
         } else {
             opts.free.count_error += 1;
             for (let il=0;il<opts.W.length;il++) {
@@ -49,8 +69,11 @@ function Study() {
                 else {_nW = Y_real[il-1].slice();  _nW.push(opts.b);}
 
                  for (let j=0;j<opts.W[il].length;j++) {
-                      if (Y_real[Y_real.length-1][0] === 0) {self.v.Sum(opts.W[il][j], _nW);}
-                      else {self.v.Diff(opts.W[il][j], _nW);}
+                      if (Y_real[Y_real.length-1][0] === 0) {
+                          /*if(Y_real[Y_real.length-1][j] === 0)*/ self.v.Sum(opts.W[il][j], _nW);
+                      } else {
+                          /*if(Y_real[Y_real.length-1][j] === 1)*/ self.v.Diff(opts.W[il][j], _nW);
+                     }
                  }
 
             }
@@ -58,7 +81,7 @@ function Study() {
     }
 
     this.studyBackpropag = function(opts, Y_real, sY_ideal, errors) {
-            if (Y_real[Y_real.length-1][0] !== sY_ideal) opts.free.count_error += 1;
+            if (self.v.IsEq(Y_real[Y_real.length-1], sY_ideal)) opts.free.count_error += 1;
             for (let il=0;il<opts.W.length-1;il++) {
                 let sY_real = Y_real[il].slice();
                 let _d = 0;
@@ -116,7 +139,7 @@ function Study() {
                         if (opts.show_log & il===opts.W.length-1 & era%opts.show_log_era_in_step===0) {
                             opts.func_write_log('X: ');
                             self.v.write(X, opts.func_write_log);
-                            opts.func_write_log(' | '+sY_ideal+'\nnW: ');
+                            opts.func_write_log(' | '+JSON.stringify(sY_ideal)+'\nnW: ');
                             self.v.write(nW, opts.func_write_log);
                         }
 
@@ -125,7 +148,7 @@ function Study() {
                         Y_real[il].push(nY_real);
 
                         if(opts.show_log & il===opts.W.length-1 & era%opts.show_log_era_in_step===0){
-                            opts.func_write_log(' | '+nY_real+'\n\n');
+                            opts.func_write_log(' | '+JSON.stringify(Y_real[il])+'\n\n');
                         }
 
                     }
@@ -138,7 +161,8 @@ function Study() {
                 //self.calcError(opts, Y_real, sY_ideal, errors);
 
                 // обучение
-                self.studySimple(opts, Y_real, sY_ideal, X);
+                self.studyDelta(opts, Y_real, sY_ideal, X);
+                //self.studySimple(opts, Y_real, sY_ideal, X);
                 //self.studyBackpropag(opts, Y_real, sY_ideal, errors);
 
             }

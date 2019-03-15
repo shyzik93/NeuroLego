@@ -29,8 +29,8 @@ function Use() {
             for (let il=0;il<opts.W.length;il++) {
 
                 if(opts.show_log) {
-                    if (il === opts.W.length-1) {opts.func_write_log('  Выход (y):');
-                    } else { opts.func_write_log('  Слой '+(il+1)+':'); }
+                    if (il === opts.W.length-1) {opts.func_write_log('  Выход (y): ');
+                    } else { opts.func_write_log('  Слой '+(il+1)+': '); }
                  }
 
                 if (il > 0) {X = sY_real; X.push(opts.b);}
@@ -42,10 +42,10 @@ function Use() {
                 for (let iw = 0; iw<sW.length; iw++) {
                     let _nY_real = self.n.sum(X, sW[iw]);
                     let nY_real = opts.neuron(_nY_real);
-                    if(opts.show_log) opts.func_write_log(' '+nY_real);
                     sY_real.push(nY_real);
                 }
 
+                if(opts.show_log) self.v.write(sY_real, opts.func_write_log);
                 if(opts.show_log) opts.func_write_log('\n');
 
             }

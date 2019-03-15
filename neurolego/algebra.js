@@ -11,9 +11,18 @@ function Vector(func_write_log) {
 
     this.check_size = function(v1, v2) {
         if (v1.length !== v2.length) {
-            alert('Векторы имеют разную размерность!');
+            alert('Векторы '+JSON.stringify(v1)+'  и '+JSON.stringify(v2)+' имеют разную размерность!');
             exit();
         }
+    }
+
+    /* сравнение векторов */
+    this.IsEq = function(v1, v2) {
+        this.check_size(v1, v2);
+        for (let i=0; i < v1.length; i++) {
+            if (v1[i] !== v2[i]) return 0;
+        }
+        return 1;
     }
 
     /* сложение векторов ( v1 + v2 ) */
