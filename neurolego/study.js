@@ -32,10 +32,12 @@ function Study() {
        //alert(JSON.stringify(errors)); exit();
     }
 
+    /* Дельта-правило. Для одного нейрона с выходом и входом от 0. до 1.0 */
     this.studyDelta = function() {
+        
     }
 
-    /* Хебба */
+    /* Правила Хебба. Идеально для одного бинарного нейрона (1 и 0). Для двух слоёв срабатывает не всегда.*/
     this.studySimple = function(opts, Y_real, sY_ideal, X) {
         if (Y_real[Y_real.length-1][0] === sY_ideal) {
         } else {
