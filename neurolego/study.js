@@ -120,6 +120,7 @@ function Study() {
         self.validate_opts(opts, 'study');
 
         opts.free.count_error = -1;
+        opts.free.restart_study_count = opts.restart_study_count;
         let era = 1;
 
         while (opts.free.count_error !== 0) {
@@ -188,10 +189,19 @@ function Study() {
 
            //opts.func_write_log(Y_real[Y_real.length-1][0]+' ' +'  ' +error_era+'\n');
            //if (error_era <= 0) {return 1;}
+
            if (opts.free.count_error === 0) {return 1;}
 
            era += 1;
            error_era = 0;
+
+//alert(JSON.stringify([opts.restart_study, era == opts.count_era+1, opts.free.restart_study_count]));
+           if (opts.restart_study & era == opts.count_era+1 & opts.free.restart_study_count > 0) {
+//alert(9);
+                era = 1;
+                opts.free.restart_study_count -= 1;
+                self.generateWByTopology(opts.W, opts.topology, opts.count_input);
+           }
 
         }
 

@@ -220,10 +220,14 @@ document.write('<h3>Обучение</h3>');
     <br>
     Скорость обучения: <input type="input" name="speed_study" value="1" size="6">
     <br>
-
-    <input type="button" onclick="startStudy(this)" value="Начать обучение">
     <input type="checkbox" name="show_log" checked>
-    Выводить лог через каждые <input type="text" value="1" name="show_log_era_in_step" size="3"> эпох
+    Выводить лог через каждые <input type="text" value="50" name="show_log_era_in_step" size="3"> эпох
+    <br>
+     <input type="checkbox" name="restart_study" checked>
+    Перезапускать обучение <input type="text" value="50" name="restart_study_count" size="3"> раз (если решение не найдено)
+    <br>
+    <input type="button" onclick="startStudy(this)" value="Начать обучение">
+
 
 </form>
 

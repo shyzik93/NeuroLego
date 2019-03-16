@@ -34,6 +34,8 @@ function Opts() {
         if(action==='use') {
         } else if (action==='study') {
             if (opts.count_era === undefined) opts.count_era = 50;
+            if (opts.restart_study === undefined) opts.restart_study = false;
+            if (opts.restart_study_count === undefined) opts.restart_study_count = 0;
             if (opts.show_log_era_in_step === undefined) opts.show_log_era_in_step = 1;
         }
 
@@ -45,6 +47,7 @@ function Opts() {
         } else if (action==='study') {
             opts.count_era = parseInt(opts.count_era);
             opts.speed_study = parseFloat(opts.speed_study);
+            opts.restart_study_count = parseInt(opts.restart_study_count);
             opts.show_log_era_in_step = parseInt(opts.show_log_era_in_step);
         }
 

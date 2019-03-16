@@ -36,6 +36,8 @@ function startStudy(btn) {
     let opts = {
         sets_study: new Sets_Array(Xs, sYs_ideal),
         speed_study: btn.form.speed_study.value,
+        restart_study: btn.form.restart_study.checked,
+        restart_study_count: btn.form.restart_study_count.value,
         count_era: btn.form.count_era.value,
         count_input: count_input,
         topology: topology,
