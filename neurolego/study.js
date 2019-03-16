@@ -49,27 +49,30 @@ function Study() {
        //alert(JSON.stringify(errors)); exit();
     }
 
-    /* Дельта-правило. Для одного нейрона с выходом и входом от 0. до 1.0 */
+    /* Дельта-правило. Для одного нейрона с выходом и входом от 0.0 до 1.0 */
     this.studyDelta = function(opts, Y_real, sY_ideal, X) {
-        let delta = (sY_ideal[0] - Y_real[Y_real.length-1][0]) * opts.speed_study;
+        let _delta = sY_ideal.slice();
+        self.v.Diff(_delta, Y_real[Y_real.length-1]);
+        _delta = self.v.MultiplyScalConst(_delta, 1);
+        let delta = _delta * opts.speed_study;
+        //let delta = Math.pow(_delta, 2) * opts.speed_study;
+        //if (_delta < 0) delta = delta * -1;
+        //let delta = (sY_ideal - Y_real[Y_real.length-1]) * opts.speed_study;
 
         if (delta !== 0) opts.free.count_error += 1;
 
         for (let il=0;il<opts.W.length;il++) {
 
             let _nW=X;
-            if (il===0) _nW = X;
-            else {_nW = Y_real[il-1].slice();  _nW.push(opts.b); }
+            if (il !== 0) {
+                _nW = Y_real[il-1].slice();
+                _nW.push(opts.b);
+             }
 
             self.v.MultiplyVectConst(_nW, delta);
 
              for (let j=0;j<opts.W[il].length;j++) {
-                  
-                  //if (Y_real[Y_real.length-1][0] === 0) {
                   self.v.Sum(opts.W[il][j], _nW);
-                  //} else {
-                  //    self.v.Diff(opts.W[il][j], _nW);
-                  //}
              }
         }
     }
@@ -89,9 +92,9 @@ function Study() {
 
                  for (let j=0;j<opts.W[il].length;j++) {
                       if (Y_real[Y_real.length-1][0] === 0) {
-                          /*if(Y_real[Y_real.length-1][j] === 0)*/ self.v.Sum(opts.W[il][j], _nW);
+                          self.v.Sum(opts.W[il][j], _nW);
                       } else {
-                          /*if(Y_real[Y_real.length-1][j] === 1)*/ self.v.Diff(opts.W[il][j], _nW);
+                          self.v.Diff(opts.W[il][j], _nW);
                      }
                  }
 
@@ -100,7 +103,40 @@ function Study() {
     }
 
     this.studyBackpropag = function(opts, Y_real, sY_ideal, errors) {
-            if (self.v.IsEq(Y_real[Y_real.length-1], sY_ideal)) opts.free.count_error += 1;
+        let delta = sY_ideal.slice();
+        self.v.Diff(delta, Y_real[Y_real.length-1]);
+        delta = self.v.MultiplyScalConst(delta, 1) * opts.speed_study;
+        //opts.func_write_log('D: '+JSON.stringify(delta)+'\n\n');
+
+        if (self.v.MultiplyScalConst(delta, 1) !== 0) opts.free.count_error += 1;
+
+        //for (let il=opts.W.length-2;il>=0;il--) {
+        for (let il=0;il<opts.W.length;il++) {
+            //let commonStratumW = [];
+
+            // вычисляем суммарный вклад веса по слою
+
+            /*for (let j=0;j<opts.W[il].length;j++) {
+                let commonNeuronW = self.v.MultiplyScalConst(opts.W[il][j], 1);
+                commonStratumW.push(commonNeuronW);
+                }
+            commonStratumW = self.v.MultiplyScalConst(commonStratumW, 1);*/
+
+            // расчитываем значимость и ошибку каждого веса
+
+            for (let j=0;j<opts.W[il].length;j++) {
+                // значимость веса
+                let nE = opts.W[il][j].slice();
+                //self.v.MultiplyVectConst(nE, 1/commonStratumW);
+//opts.func_write_log('D: '+JSON.stringify(nE)+'\n\n');
+                // ошибочность веса
+                self.v.MultiplyVectConst(nE, delta);
+                // обновление веса
+                self.v.Diff(opts.W[il][j], nE);
+            }
+        }
+
+    /*        if (self.v.IsEq(Y_real[Y_real.length-1], sY_ideal)) opts.free.count_error += 1;
             for (let il=0;il<opts.W.length-1;il++) {
                 let sY_real = Y_real[il].slice();
                 let _d = 0;
@@ -112,7 +148,7 @@ function Study() {
                     //alert(JSON.stringify([opts.W[il][j], sY_real]));
                     self.v.Diff(opts.W[il][j], sY_real);
                 }
-            }
+            }    */
     }
 
     this.study = function(opts) {
@@ -183,8 +219,8 @@ function Study() {
                 //self.calcError(opts, Y_real, sY_ideal, errors);
 
                 // обучение
-                //self.studyDelta(opts, Y_real, sY_ideal, X);
-                self.studySimple(opts, Y_real, sY_ideal, X);
+                self.studyDelta(opts, Y_real, sY_ideal, X);
+                //self.studySimple(opts, Y_real, sY_ideal, X);
                 //self.studyBackpropag(opts, Y_real, sY_ideal, errors);
 
             }
@@ -197,9 +233,7 @@ function Study() {
            era += 1;
            error_era = 0;
 
-//alert(JSON.stringify([opts.restart_study, era == opts.count_era+1, opts.free.restart_study_count]));
            if (opts.restart_study & era == opts.count_era+1 & opts.free.restart_study_count > 0) {
-//alert(9);
                 era = 1;
                 opts.free.restart_study_count -= 1;
                 self.generateWByTopology(opts.W, opts.topology, opts.count_input);
