@@ -30,19 +30,8 @@ function startStudy(btn) {
     let count_input = parseInt(btn.form.count_input.value);
     let topology = JSON.parse(btn.form.topology.value);
     let W = [];
-    let _count_input;
 
-    for (let il=0; il<topology.length;il++) {
-        W[il] = [];
-
-        // количество входов нейрона равно количеству нейронов в предыдущем слое
-        if (il === 0) _count_input = count_input;
-        else _count_input = topology[il-1]
-
-        for (let j=0;j<topology[il];j++) {
-            W[il][j] = s.v.create(_count_input+1, 'random');
-        }
-    }
+    s.generateWByTopology(W, topology, count_input);
 
     let opts = {
         sets_study: new Sets_Array(Xs, sYs_ideal),

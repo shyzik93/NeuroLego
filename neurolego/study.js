@@ -8,6 +8,23 @@ function Study() {
     
     let self = this;
 
+    /* генерирует веса по описанию топологии */
+    this.generateWByTopology = function(W, topology, count_input) {
+        let _count_input;
+
+        for (let il=0; il<topology.length;il++) {
+            W[il] = [];
+
+            // количество входов нейрона равно количеству нейронов в предыдущем слое
+            if (il === 0) _count_input = count_input;
+            else _count_input = topology[il-1]
+
+            for (let j=0;j<topology[il];j++) {
+                W[il][j] = self.v.create(_count_input+1, 'random');
+            }
+        }
+    }
+
     this.calcError = function(opts, Y_real, sY_ideal, errors) {
         for (let il=opts.W.length-1;il>=0;il--) {
 
