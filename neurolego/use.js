@@ -35,10 +35,10 @@ function Use() {
 
                 if (il > 0) {X = sY_real; X.push(opts.b);}
 
+                // перебираем нейроны в слое
+
                 sY_real = []; // выходы для слоя
                 sW = opts.W[il]; // веса для нейронов в слое
-
-                // перебираем нейроны в слое
                 for (let iw = 0; iw<sW.length; iw++) {
                     let _nY_real = self.n.sum(X, sW[iw]);
                     let nY_real = opts.neuron(_nY_real);

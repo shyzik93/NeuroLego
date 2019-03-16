@@ -85,7 +85,7 @@ function Study() {
                 if (il===0) _nW = X;
                 else {_nW = Y_real[il-1].slice();  _nW.push(opts.b);}
 
-                self.v.MultiplyVectConst(_nW, opts.study);
+                self.v.MultiplyVectConst(_nW, opts.speed_study);
 
                  for (let j=0;j<opts.W[il].length;j++) {
                       if (Y_real[Y_real.length-1][0] === 0) {
@@ -148,30 +148,32 @@ function Study() {
                 for (let il=0;il<opts.W.length;il++) {
 
                      Y_real[il] = [];
+                     sW = opts.W[il]
 
                      if (il === 0) _X = X;
                      else {_X = Y_real[il-1].slice(); _X.push(1);}
 
                     // перебираем нейроны
-                    for (let j=0;j<opts.W[il].length;j++) {
-                        nW = opts.W[il][j];
-
-                        if (opts.show_log & il===opts.W.length-1 & era%opts.show_log_era_in_step===0) {
-                            opts.func_write_log('X: ');
-                            self.v.write(X, opts.func_write_log);
-                            opts.func_write_log(' | '+JSON.stringify(sY_ideal)+'\nnW: ');
-                            self.v.write(nW, opts.func_write_log);
-                        }
-
-                        let _nY_real = self.n.sum(_X, nW);
+                    for (let iw=0;iw<sW.length;iw++) {
+                        let _nY_real = self.n.sum(_X, sW[iw]);
                         let nY_real = opts.neuron(_nY_real);
                         Y_real[il].push(nY_real);
-
-                        if(opts.show_log & il===opts.W.length-1 & era%opts.show_log_era_in_step===0){
-                            opts.func_write_log(' | '+JSON.stringify(Y_real[il])+'\n\n');
-                        }
-
                     }
+
+//[[0,1], [1,1], [1,1], [0,1]]
+
+                   if(opts.show_log & il===opts.W.length-1 & era%opts.show_log_era_in_step===0){
+                        opts.func_write_log('X: ');
+                        self.v.write(X, opts.func_write_log);
+                        opts.func_write_log(' | '+JSON.stringify(sY_ideal)+'\n');
+                        for(let j=0;j<opts.W[il].length;j++) {
+                            opts.func_write_log('nW: ');
+                            self.v.write(opts.W[il][j], opts.func_write_log);
+                            opts.func_write_log(' | '+Y_real[il][j]+'\n');
+                       }
+                       opts.func_write_log('\n');
+                    }
+
                 }
 
 //alert(JSON.stringify(Y_real))
@@ -181,8 +183,8 @@ function Study() {
                 //self.calcError(opts, Y_real, sY_ideal, errors);
 
                 // обучение
-                self.studyDelta(opts, Y_real, sY_ideal, X);
-                //self.studySimple(opts, Y_real, sY_ideal, X);
+                //self.studyDelta(opts, Y_real, sY_ideal, X);
+                self.studySimple(opts, Y_real, sY_ideal, X);
                 //self.studyBackpropag(opts, Y_real, sY_ideal, errors);
 
             }
