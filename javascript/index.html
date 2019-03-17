@@ -16,6 +16,7 @@ window.onerror = function (message, url, lineNo, colNo, e){ alert('Error: ' + me
     <script src="neurolego/use.js"></script>
     <script src="lib.js"></script>
     <script src="index.js"></script>
+    <script src="dataset/mnist/index.js"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="HandheldFriendly" content="true" />
@@ -23,7 +24,6 @@ window.onerror = function (message, url, lineNo, colNo, e){ alert('Error: ' + me
 </head>
 
 <body>
-
 <style>
 
 body {
@@ -79,7 +79,6 @@ form .examples textarea[name="sYs_ideal"], form .examples textarea[name="sYs_rea
     height: 125px;
 }
 </style>
-
 <!--
 = Нейронные сети =
 
@@ -87,7 +86,6 @@ form .examples textarea[name="sYs_ideal"], form .examples textarea[name="sYs_rea
 
 == Линейная алгебра ==
 -->
-
 <script>
 
 /*var a = new Algebra();
@@ -187,11 +185,7 @@ a.m.write(m1);
 */
 
 document.write('<h2>Нейроны</h2>');
-
-document.write('<br>');
-
 document.write('<h3>Обучение</h3>');
-
 </script>
 
 <form id="form_study">
