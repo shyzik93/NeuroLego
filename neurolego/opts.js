@@ -22,6 +22,7 @@ function Opts() {
             if (opts.sets_study === undefined) {console.log('Укажите обучающие наборы!'); return;}
             if (opts.topology === undefined) {console.log('Укажите кол-во нейронов в слоях!'); return;}
             if (opts.speed_study === undefined) {console.log('Укажите скорость обучения!'); return;}
+            if (opts.method_study === undefined) {console.log('Укажите метод обучения!'); return;}
         }
 
        /* не обязательные */

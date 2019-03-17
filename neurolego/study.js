@@ -214,14 +214,17 @@ function Study() {
 
 //alert(JSON.stringify(Y_real))
 
-                // проверяем правильность выхода после последнего слоя
-                errors = [];
-                //self.calcError(opts, Y_real, sY_ideal, errors);
+               if (opts.method_study === 'gradient' ) {
 
-                // обучение
-                self.studyDelta(opts, Y_real, sY_ideal, X);
-                //self.studySimple(opts, Y_real, sY_ideal, X);
-                //self.studyBackpropag(opts, Y_real, sY_ideal, errors);
+                    // проверяем правильность выхода после последнего слоя
+                    errors = [];
+                   self.calcError(opts, Y_real, sY_ideal, errors);
+                   self.studyBackpropag(opts, Y_real, sY_ideal, errors)
+                } else if (opts.method_study === 'delta' ) {
+                    self.studyDelta(opts, Y_real, sY_ideal, X);
+                } else if (opts.method_study === 'simple') {
+                    self.studySimple(opts, Y_real, sY_ideal, X);
+                }
 
             }
 
