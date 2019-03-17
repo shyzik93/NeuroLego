@@ -6,6 +6,10 @@
     Start date: 2019-03-10 05:30
 -->
 
+    <script>
+window.onerror = function (message, url, lineNo, colNo, e){ alert('Error: ' + message + '\n' + 'Line Number: ' + lineNo +'\n\n'+ JSON.stringify(e)); return true; }
+</script>
+
     <script src="neurolego/algebra.js"></script>
     <script src="neurolego/opts.js"></script>
     <script src="neurolego/study.js"></script>
