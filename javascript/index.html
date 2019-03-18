@@ -231,6 +231,11 @@ document.write('<h3>Обучение</h3>');
     Перезапускать обучение <input type="text" value="50" name="restart_study_count" size="3"> раз (если решение не найдено)
     <br>
     <input type="button" onclick="startStudy(this)" value="Начать обучение">
+    <select onchange="actionsStudy(this);">
+        <option value='actions'>Действия</option>
+        <option value='export'>Экспорт в буфер</option>
+        <option value='import'>Импорт из буфера</option>
+    </select>
 
 
 </form>

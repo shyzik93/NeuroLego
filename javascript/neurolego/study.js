@@ -155,6 +155,10 @@ function Study() {
 
         self.validate_opts(opts, 'study');
 
+        // генерируем веса
+       opts.W = [];
+        self.generateWByTopology(opts.W, opts.topology, opts.count_input);
+
         opts.free.count_error = -1;
         opts.free.restart_study_count = opts.restart_study_count;
         let era = 1;

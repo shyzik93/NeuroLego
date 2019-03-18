@@ -12,44 +12,84 @@ function clearLog() {
     document.getElementById('form_log').log.value = '';
 }
 
+function _CopyToClipboard(el) {
+    if (document.selection) {
+        var range = document.body.createTextRange();
+        range.moveToElementText(el);
+        range.select().createTextRange();
+        document.execCommand("Copy");
+    } else if (window.getSelection) {
+        var range = document.createRange();
+        range.selectNode(el);
+        window.getSelection().addRange(range);
+        document.execCommand("Copy");
+    }
+}
+
+function copyToClipboard(text) {
+    let element = document.createElement("div");
+    element.textContent = text;
+    let $temp = document.createElement("input");
+    document.body.appendChild($temp);
+    $temp.value = element.textContent;
+
+_CopyToClipboard(document.getElementById('form_study'));
+
+    /*// select text
+    // https://learn.javascript.ru/range-textrange-selection
+    let rng = document.createRange();
+    rng.selectNodeContents(element);
+    window.getSelection().addRange(rng);
+    //rng.setStart($temp, 0);
+    //rng.setEnd($temp, 10);
+    //return rng.toString();
+    //input.select();
+ 
+    document.execCommand("copy");
+    $temp.remove();*/
+}
+
+function collectOptsFromFormStudy(form) {
+    let opts = {
+        Xs: JSON.parse(form.Xs.value),
+        sYs_ideal: JSON.parse(form.sYs_ideal.value),
+        speed_study: form.speed_study.value,
+        restart_study: form.restart_study.checked,
+        restart_study_count: form.restart_study_count.value,
+        count_era: form.count_era.value,
+        count_input: parseInt(form.count_input.value),
+        topology: JSON.parse(form.topology.value),
+        show_log_era_in_step: form.show_log_era_in_step.value,
+        method_study: form.method_study.value,
+
+        show_log: form.show_log.checked,
+        neuron: form.neuron.value
+        //b: form.b.value
+    }
+    return opts;
+}
+
+function collectOptsFromFormUsing(form) {
+    let opts = {
+        Xs: JSON.parse(form.Xs.value),
+        W: JSON.parse(form.W.value),
+
+        show_log: form.show_log.checked,
+        neuron: form.neuron.value
+        //b: form.b.value
+    }
+    return opts;
+}
+
 function startStudy(btn) {
 
     clearLog();
     let s = new Study();
 
-    // ne-or
-    let Xs = JSON.parse(btn.form.Xs.value);
-    let sYs_ideal = JSON.parse(btn.form.sYs_ideal.value);
-    // xor
-    //let x_example = [[1, 0, 0], [1, 0, 1], [1, 1, 0], [1,1,1]];
-    //let y_example = [0, 1, 1, 0];
-    //let x_example = [[1, 1, 0.3], [1, 0.4, 0.5], [1, 0.7, 0.8]];
-    //let y_example = [1, 1, 0];
+    let opts = collectOptsFromFormStudy(btn.form);
 
-    // генерируем веса
-    let count_input = parseInt(btn.form.count_input.value);
-    let topology = JSON.parse(btn.form.topology.value);
-    let W = [];
-
-    s.generateWByTopology(W, topology, count_input);
-
-    let opts = {
-        sets_study: /*new DataSeter()*/new Sets_Array(Xs, sYs_ideal),
-        speed_study: btn.form.speed_study.value,
-        restart_study: btn.form.restart_study.checked,
-        restart_study_count: btn.form.restart_study_count.value,
-        count_era: btn.form.count_era.value,
-        count_input: count_input,
-        topology: topology,
-        show_log_era_in_step: btn.form.show_log_era_in_step.value,
-        method_study: btn.form.method_study.value,
-
-        show_log: btn.form.show_log.checked,
-        neuron: s.neurons[btn.form.neuron.value],
-        func_write_log: writeLog,
-        W: W
-        //b: btn.form.b.value
-    }
+    opts.func_write_log = writeLog;
+    opts.sets_study = /*new DataSeter()*/new Sets_Array(opts.Xs, opts.sYs_ideal);
 
     let t1 = (new Date()).getMilliseconds();
     let is_studied = s.study(opts);
@@ -59,9 +99,9 @@ function startStudy(btn) {
     else { writeLog('Обучение не закончилось'); }
 
     writeLog('\nw1: ');
-    s.v.write(W, writeLog);
+    s.v.write(opts.W, writeLog);
 
-    btn.form.W.value = JSON.stringify(W);
+    btn.form.W.value = JSON.stringify(opts.W);
 }
 
 function startUsing(btn) {
@@ -69,17 +109,10 @@ function startUsing(btn) {
     clearLog();
     let u = new Use();
 
-    let Xs = JSON.parse(btn.form.Xs.value);
+    let opts = collectOptsFromFormUsing(btn.form);
 
-    let opts = {
-        sets_using: new Sets_Array(Xs),
-
-        show_log: btn.form.show_log.checked,
-        neuron: u.neurons[btn.form.neuron.value],
-        func_write_log: writeLog,
-        W: JSON.parse(btn.form.W.value)
-        //b: btn.form.b.value
-    }
+    opts.func_write_log = writeLog;
+    opts.sets_using = new Sets_Array(opts.Xs);
 
     let t1 = (new Date()).getMilliseconds();
     u.use(opts);
@@ -109,6 +142,19 @@ function calcCountInput(field) {
 
     if (Xs.length > 0) {
         field.form.count_input.value = Xs[0].length;
+    }
+
+}
+
+function actionsStudy(select) {
+    if (select.value === 'export') {
+        let opts = collectOptsFromFormStudy(select.form);
+        copyToClipboard(JSON.stringify(opts));
+    } else if (select.value === 'import') {
+    }
+
+    if (select.value !== 'actions') {
+        select.value = 'actions';
     }
 
 }

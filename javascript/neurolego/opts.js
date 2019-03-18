@@ -14,9 +14,10 @@ function Opts() {
 
         /* обязательные */
 
-        if (opts.W === undefined) {console.log('Укажите веса'); return;}
+        if (opts.neuron === undefined) {console.log('Укажите нейрон!'); return;}
 
         if(action==='use') {
+            if (opts.W === undefined) {console.log('Укажите веса'); return;}
             if (opts.sets_using === undefined) {console.log('Укажите входные наборы!'); return;}
         } else if (action==='study') {
             if (opts.sets_study === undefined) {console.log('Укажите обучающие наборы!'); return;}
@@ -43,6 +44,10 @@ function Opts() {
         /* коррекция опций. Например, строку в число конвертируем */
 
         opts.b = parseInt(opts.b);
+
+        if (typeof opts.neuron === 'string') {
+            opts.neuron = self.neurons[opts.neuron];
+        }
 
         if(action==='use') {
         } else if (action==='study') {
