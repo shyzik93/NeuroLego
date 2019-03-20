@@ -49,6 +49,23 @@ _CopyToClipboard(document.getElementById('form_study'));
     $temp.remove();*/
 }
 
+function setOptsToFormStudy(form, opts) {
+        form.Xs.value = JSON.stringify(opts.Xs);
+        form.sYs_ideal.value = JSON.stringify(opts.sYs_ideal);
+        form.speed_study.value = opts.speed_study;
+        form.restart_study.checked = opts.restart_study;
+        form.restart_study_count.value=opts.restart_study_count;
+        form.count_era.value = opts.count_era;
+        form.count_input.value = opts.count_input;
+        form.topology.value = JSON.stringify(opts.topology);
+        form.show_log_era_in_step.value = opts.show_log_era_in_step;
+        form.method_study.value = opts.method_study;
+
+        form.show_log.checked = opts.show_log;
+        form.neuron.value = opts.neuron;
+        //form.b.value = opts.b;
+}
+
 function collectOptsFromFormStudy(form) {
     let opts = {
         Xs: JSON.parse(form.Xs.value),
@@ -89,8 +106,8 @@ function startStudy(btn) {
     let opts = collectOptsFromFormStudy(btn.form);
 
     opts.func_write_log = writeLog;
-    opts.sets_study = /*new DataSeter()*/new Sets_Array(opts.Xs, opts.sYs_ideal);
-
+    opts.sets_study = new Sets_Array(opts.Xs, opts.sYs_ideal);
+    //opts.sets_study = new DataSeter();
     let t1 = (new Date()).getMilliseconds();
     let is_studied = s.study(opts);
     let t2 = (new Date()).getMilliseconds();
@@ -149,8 +166,11 @@ function calcCountInput(field) {
 function actionsStudy(select) {
     if (select.value === 'export') {
         let opts = collectOptsFromFormStudy(select.form);
-        copyToClipboard(JSON.stringify(opts));
+        select.form.sYs_ideal.value = JSON.stringify(opts);
+        //copyToClipboard(JSON.stringify(opts));
     } else if (select.value === 'import') {
+        let opts = JSON.parse(select.form.sYs_ideal.value);
+        setOptsToFormStudy(select.form, opts);
     }
 
     if (select.value !== 'actions') {

@@ -313,16 +313,17 @@ function Neuron(v, m) {
         return y1; // активационная ф-ция
     }
 
-    /* Нейрон - логистическая функция (сигмоидная) */
+    /* Нейрон - сигмоид (логистическая функция) */
     this.Sigma = function(y1, derive) {
         if (derive) return y1 * (1-y1);
         return 1 / (1 + Math.pow(Math.E, -y1)); // активационная ф-ция
     }
 
-    /* Нейрон - гиперболический тангенс */
-    this.Tanh = function(y1) {
-        //return Math.tanh(y1); // активационная ф-ция
-        return (Math.pow(Math.E, y1) - Math.pow(Math.E, -y1)) / (Math.pow(Math.E, y1) + Math.pow(Math.E, -y1)); // активационная ф-ция
+    /* Нейрон - сигмоид (гиперболический тангенс) */
+    this.Tanh = function(y1, derive) {
+        if (derive) return 1 - y1*y1;
+        return Math.tanh(y1); // активационная ф-ция
+        //return (Math.pow(Math.E, y1) - Math.pow(Math.E, -y1)) / (Math.pow(Math.E, y1) + Math.pow(Math.E, -y1)); // активационная ф-ция
     }
 
     /* Нейрон - улучшенная линейная функция (rectified linear unit*/

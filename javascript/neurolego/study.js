@@ -3,10 +3,102 @@
     Start date: 2019-03-10 05:30
 */
 
+function StudyBackPropagation() {
+    Algebra.call(this);
+
+    self = this;
+
+    /* Расчёт ошибки для одного примера
+         Выходы данной функции для всех примеров затем следует просуммировать и разделить на 2.
+    */
+    this.calcError = function(opts, Y_real, sY_ideal) {
+        let E = Y_real[Y_real.length-1].slice();
+        // разница между реальным ответов и идеальным
+        self.v.Diff(E, sY_ideal);
+        // разницу возводим в квадрат
+        self.v.MultiplyVect(E, E);
+        // суммируем разницы всех выходов
+        E = self.v.MultiplyScalConst(E, 1);
+
+       return E;
+
+    }
+
+    // шаг 2: расчёт изменения весов для выходного слоя
+    this.step2 = function(opts, Y_real, sY_ideal, X) {
+
+        // выход для последнего слоя (через производную)
+        let _sY_real = [];
+        // вход для последнего слоя (выход предыдущего)
+        let _X = X;
+        if (Y_real.length > 1) _X = Y_real[Y_real.length-2];
+        // веса последнего слоя
+        let sW = opts.W[opts.W.length-1];
+
+        /* формула 1.31 */
+
+        let sY_delta = Y_real[Y_real.length-1].slice();
+        // разница между реальным ответов и идеальным
+        self.v.Diff(sY_delta, sY_ideal);
+        // находим выход от производной
+        for (let j=0; j<sW.length; j++) {
+             let s = self.n.sum(_X, sW[j]);
+             let nY_real = opts.neuron(s, true);
+             _sY_real.push(nY_real);
+        }
+        // умножаем разницу на результаты производной
+        self.v.MultiplyVect(sY_delta, _sY_real);
+
+        /* формула 1.32: расчёт изменения веса */
+
+        let sW_delta = [];
+        let nW_delta;
+        //self.v.MultiplyVectConst(sY_delta, -opts.speed_study);
+        for (let j=0; j<sW.length; j++) {
+            sY_delta[j] *= -opts.speed_study;
+            nW_delta = _X.slice();
+            self.v.MultiplyVectConst(nW_delta, sY_delta[j]);
+            sW_delta.push(nW_delta);
+        }
+
+        return sW_delta;
+
+    }
+
+    // шаг 3: расчёт изменения весов для остальных слоёв
+    this.step3 = function(opts, Y_real, sY_ideal, X) {
+        let W_delta = [];
+
+        for (let il=0; il < opts.W.length-1; il++) { // без последнего слоя
+            let sY_delta = [];
+            let sW = opts.W[il];
+            for (let j=0; j < sW.length; j++) {
+                
+            }
+            
+        }
+
+        return W_delta;
+    }
+
+   // шаг 4: Обновление весов
+    this.step4 = function(opts, W_delta) {
+        for (let il=0; il < opts.W.length; il++) {
+            let sW = opts.W[il];
+            for (let j=0; j < sW.length; j++) {
+                self.v.Sum(sW[j], W_delta[il][j]);
+            }
+        }
+    }
+
+}
+
 function Study() {
     Opts.call(this);
     
     let self = this;
+
+    self.study_bp = new StudyBackPropagation();
 
     /* генерирует веса по описанию топологии */
     this.generateWByTopology = function(W, topology, count_input) {
@@ -51,13 +143,14 @@ function Study() {
 
     /* Дельта-правило. Для одного нейрона с выходом и входом от 0.0 до 1.0 */
     this.studyDelta = function(opts, Y_real, sY_ideal, X) {
-        let _delta = sY_ideal.slice();
-        self.v.Diff(_delta, Y_real[Y_real.length-1]);
-        _delta = self.v.MultiplyScalConst(_delta, 1);
-        let delta = _delta * opts.speed_study;
-        //let delta = Math.pow(_delta, 2) * opts.speed_study;
-        //if (_delta < 0) delta = delta * -1;
-        //let delta = (sY_ideal - Y_real[Y_real.length-1]) * opts.speed_study;
+
+        let delta = sY_ideal.slice();
+        // разница между идеальным ответов и реальным
+        self.v.Diff(delta, Y_real[Y_real.length-1]);
+        // суммируем разницы всех выходов
+        delta = self.v.MultiplyScalConst(delta, 1);
+
+        delta = delta * opts.speed_study;
 
         if (delta !== 0) opts.free.count_error += 1;
 
@@ -102,61 +195,12 @@ function Study() {
         }
     }
 
-    this.studyBackpropag = function(opts, Y_real, sY_ideal, errors) {
-        let delta = sY_ideal.slice();
-        self.v.Diff(delta, Y_real[Y_real.length-1]);
-        delta = self.v.MultiplyScalConst(delta, 1) * opts.speed_study;
-        //opts.func_write_log('D: '+JSON.stringify(delta)+'\n\n');
-
-        if (self.v.MultiplyScalConst(delta, 1) !== 0) opts.free.count_error += 1;
-
-        //for (let il=opts.W.length-2;il>=0;il--) {
-        for (let il=0;il<opts.W.length;il++) {
-            //let commonStratumW = [];
-
-            // вычисляем суммарный вклад веса по слою
-
-            /*for (let j=0;j<opts.W[il].length;j++) {
-                let commonNeuronW = self.v.MultiplyScalConst(opts.W[il][j], 1);
-                commonStratumW.push(commonNeuronW);
-                }
-            commonStratumW = self.v.MultiplyScalConst(commonStratumW, 1);*/
-
-            // расчитываем значимость и ошибку каждого веса
-
-            for (let j=0;j<opts.W[il].length;j++) {
-                // значимость веса
-                let nE = opts.W[il][j].slice();
-                //self.v.MultiplyVectConst(nE, 1/commonStratumW);
-//opts.func_write_log('D: '+JSON.stringify(nE)+'\n\n');
-                // ошибочность веса
-                self.v.MultiplyVectConst(nE, delta);
-                // обновление веса
-                self.v.Diff(opts.W[il][j], nE);
-            }
-        }
-
-    /*        if (self.v.IsEq(Y_real[Y_real.length-1], sY_ideal)) opts.free.count_error += 1;
-            for (let il=0;il<opts.W.length-1;il++) {
-                let sY_real = Y_real[il].slice();
-                let _d = 0;
-                sY_real.push(1);
-                for (let ie=0; ie<errors[il+1].length;ie++) {_d+=errors[il+1][ie].delta;}
-                self.v.MultiplyVectConst(sY_real, _d*10);
-
-                for (let j=0;j<opts.W[il].length;j++) {
-                    //alert(JSON.stringify([opts.W[il][j], sY_real]));
-                    self.v.Diff(opts.W[il][j], sY_real);
-                }
-            }    */
-    }
-
     this.study = function(opts) {
 
         self.validate_opts(opts, 'study');
 
         // генерируем веса
-       opts.W = [];
+        opts.W = [];
         self.generateWByTopology(opts.W, opts.topology, opts.count_input);
 
         opts.free.count_error = -1;
@@ -172,6 +216,8 @@ function Study() {
             let error, delta, errors, error_era=0; // суммарная величина ошибки на всех примерах
 
             let Y_real = [];
+
+            let ers = 0;
 
             // перебираем примеры
             for (let i=0; i < opts.sets_study.length; i++) {
@@ -203,12 +249,12 @@ function Study() {
 //[[0,1], [1,1], [1,1], [0,1]]
 
                    if(opts.show_log & il===opts.W.length-1 & era%opts.show_log_era_in_step===0){
-                        opts.func_write_log('X: ');
-                        self.v.write(X, opts.func_write_log);
+                        //opts.func_write_log('X: ');
+                        //self.v.write(X, opts.func_write_log);
                         opts.func_write_log(' | '+JSON.stringify(sY_ideal)+'\n');
                         for(let j=0;j<opts.W[il].length;j++) {
-                            opts.func_write_log('nW: ');
-                            self.v.write(opts.W[il][j], opts.func_write_log);
+                            //opts.func_write_log('nW: ');
+                            //self.v.write(opts.W[il][j], opts.func_write_log);
                             opts.func_write_log(' | '+Y_real[il][j]+'\n');
                        }
                        opts.func_write_log('\n');
@@ -219,18 +265,21 @@ function Study() {
 //alert(JSON.stringify(Y_real))
 
                if (opts.method_study === 'gradient' ) {
-
-                    // проверяем правильность выхода после последнего слоя
-                    errors = [];
-                   self.calcError(opts, Y_real, sY_ideal, errors);
-                   self.studyBackpropag(opts, Y_real, sY_ideal, errors)
+                    let sW_delta = self.study_bp.step2(opts, Y_real, sY_ideal, X);
+                    if(era%10000===0) opts.func_write_log(i+':: '+JSON.stringify(sW_delta)+'\n');
+                    self.study_bp.step4(opts, [sW_delta]);
+                    opts.free.count_error += 1;
                 } else if (opts.method_study === 'delta' ) {
                     self.studyDelta(opts, Y_real, sY_ideal, X);
                 } else if (opts.method_study === 'simple') {
                     self.studySimple(opts, Y_real, sY_ideal, X);
                 }
 
+               //ers += this.study_bp.calcDelta(opts, Y_real, sY_ideal);
+
             }
+
+           if (era%opts.show_log_era_in_step===0) opts.func_write_log('Error: '+ers+'\n');
 
            //opts.func_write_log(Y_real[Y_real.length-1][0]+' ' +'  ' +error_era+'\n');
            //if (error_era <= 0) {return 1;}
@@ -244,6 +293,7 @@ function Study() {
                 era = 1;
                 opts.free.restart_study_count -= 1;
                 self.generateWByTopology(opts.W, opts.topology, opts.count_input);
+                ers = 0;
            }
 
         }
