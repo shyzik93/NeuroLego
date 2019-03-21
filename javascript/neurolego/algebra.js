@@ -6,6 +6,8 @@
 /* операции над векторами */
 function Vector(func_write_log) {
 
+    let self = this;
+
     /*if(func_write_log === undefined) {this.func_write_log = document.write;}
     else {this.func_write_log = func_write_log;}*/
 
@@ -18,7 +20,7 @@ function Vector(func_write_log) {
 
     /* сравнение векторов */
     this.IsEq = function(v1, v2) {
-        this.check_size(v1, v2);
+        self.check_size(v1, v2);
         for (let i=0; i < v1.length; i++) {
             if (v1[i] !== v2[i]) return 0;
         }
@@ -28,14 +30,14 @@ function Vector(func_write_log) {
     /* сложение векторов ( v1 + v2 ) */
     this.Sum = function(v1, v2, offset) {
         if (offset === undefined) offset = 0;
-        this.check_size(v1, v2);
+        self.check_size(v1, v2);
         for (let i=0; i < v1.length-offset; i++) v1[i] = v1[i] + v2[i];
     }
 
     /* вычитание векторов ( v1 - v2 ) */
     this.Diff = function(v1, v2, offset) {
         if (offset === undefined) offset = 0;
-        this.check_size(v1, v2);
+        self.check_size(v1, v2);
         for (let i=0; i < v1.length-offset; i++) v1[i] = v1[i] - v2[i];
     }
 
@@ -61,7 +63,7 @@ function Vector(func_write_log) {
 
     /* скалярное произведение векторов ( v1 * v2 )*/
     this.MultiplyScal = function(v1, v2) {
-        this.check_size(v1, v2);
+        self.check_size(v1, v2);
         let sum = 0;
         for (let i=0; i < v1.length; i++) sum += v1[i] * v2[i];
         return sum;
@@ -69,7 +71,7 @@ function Vector(func_write_log) {
 
     /* векторное произведение векторов ( v2 x v2 )*/
     this.MultiplyVect = function(v1, v2) {
-        this.check_size(v1, v2);
+        self.check_size(v1, v2);
         for (let i=0; i < v1.length; i++) v1[i] = v1[i] * v2[i];
     }
 
@@ -346,7 +348,7 @@ function Algebra() {
     'perceptron': this.n.Perceptron,
     'linear': this.n.Linear,
     'sigma': this.n.Sigma,
-    'tahn': this.n.Tanh,
+    'tanh': this.n.Tanh,
     'relu': this.n.ReLU,
     'softplus': this.n.Softplus
     };

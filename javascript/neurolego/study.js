@@ -6,7 +6,7 @@
 function StudyBackPropagation() {
     Algebra.call(this);
 
-    self = this;
+    let self = this;
 
     /* Расчёт ошибки для одного примера
          Выходы данной функции для всех примеров затем следует просуммировать и разделить на 2.
@@ -46,6 +46,7 @@ function StudyBackPropagation() {
              let nY_real = opts.neuron(s, true);
              _sY_real.push(nY_real);
         }
+
         // умножаем разницу на результаты производной
         self.v.MultiplyVect(sY_delta, _sY_real);
 
@@ -265,6 +266,7 @@ function Study() {
 //alert(JSON.stringify(Y_real))
 
                if (opts.method_study === 'gradient' ) {
+
                     let sW_delta = self.study_bp.step2(opts, Y_real, sY_ideal, X);
                     if(era%10000===0) opts.func_write_log(i+':: '+JSON.stringify(sW_delta)+'\n');
                     self.study_bp.step4(opts, [sW_delta]);
