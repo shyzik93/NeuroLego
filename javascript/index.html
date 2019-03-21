@@ -78,6 +78,13 @@ form .examples textarea[name="sYs_ideal"], form .examples textarea[name="sYs_rea
     width: 98%;
     height: 125px;
 }
+
+fieldset {
+    /*border: 1px solid #aaaaaa;*/
+    border-radius: 5px;
+    margin: 10px 0 10px 0;
+    /*padding: 5px 5px 5px 5px;*/
+}
 </style>
 <!--
 = Нейронные сети =
@@ -183,13 +190,13 @@ document.write('<br>(m1)T:<br>');
 //v.write(m1);
 a.m.write(m1);
 */
-
-document.write('<h2>Нейроны</h2>');
-document.write('<h3>Обучение</h3>');
 </script>
+
+<h3>Обучение</h3>
 
 <form id="form_study">
 
+<fieldset>
    Нейрон: <select name="neuron">
         <option value='perceptron' checked>Перцептрон</option>
         <option value='linear'>Линейный</option>
@@ -204,6 +211,17 @@ document.write('<h3>Обучение</h3>');
         <option value='delta'>Дельта (натур. числа)</option>
         <option value='gradient'>Градиентный спуск (не работает пока)</option>
     </select>
+    <br>
+    Веса (w): <input type="input" name="W" disabled>
+    <br>
+    <!--Значение смещения (b): <input type="input" name="b" value="1" size="3"><br>-->
+    Число нейронов в слоях: <input type="input" name="topology" value="[2,1]">
+    <br>
+    Число входов: <input type="input" name="count_input" value="2">
+    <br>
+</fieldset>
+
+<fieldset>
    <div class="examples">
         <div class="x">
             Входные данные (x):<br>
@@ -212,14 +230,10 @@ document.write('<h3>Обучение</h3>');
             Результат (y):<br>
             <textarea name="sYs_ideal">[[0], [1], [1], [0]]</textarea>
         </div>
-    <div>
-    Веса (w): <input type="input" name="W" disabled>
-    <br>
-    <!--Значение смещения (b): <input type="input" name="b" value="1" size="3"><br>-->
-    Число нейронов в слоях: <input type="input" name="topology" value="[2,1]">
-    <br>
-    Число входов: <input type="input" name="count_input" value="2">
-    <br>
+    </div>
+</fieldset>
+
+<fieldset>
     Число эпох: <input type="input" name="count_era" value="50" size="6">
     <br>
     Скорость обучения: <input type="input" name="speed_study" value="1" size="6">
@@ -229,7 +243,8 @@ document.write('<h3>Обучение</h3>');
     <br>
      <input type="checkbox" name="restart_study" checked>
     Перезапускать обучение <input type="text" value="50" name="restart_study_count" size="3"> раз (если решение не найдено)
-    <br>
+</fieldset>
+
     <input type="button" onclick="startStudy(this)" value="Начать обучение">
     <select onchange="actionsStudy(this);">
         <option value='actions'>Действия</option>
@@ -244,6 +259,7 @@ document.write('<h3>Обучение</h3>');
 
 <form id="form_use">
 
+<fieldset>
     Нейрон: <select name="neuron">
         <option value='perceptron' checked>Перцептрон</option>
         <option value='linear'>Линейный</option>
@@ -252,6 +268,13 @@ document.write('<h3>Обучение</h3>');
         <option value='relu'>ReLU</option>
         <option value='softplus'>Softplus</option>
     </select>
+    <br>
+    Веса (w): <input type="input" name="W" value="[ [[-1,2,-1], [1,-1,0] ], [[1,3,0]]]">
+    <input type="button" onclick="copyW1(this)" value="Взять из обучения">
+    <!--Значение смещения (b): <input type="input" name="b" value="1" size="3"><br>-->
+</fieldset>
+
+<fieldset>
     <div class="examples">
        <div class="x">
             Входные данные (x):<br>
@@ -260,15 +283,15 @@ document.write('<h3>Обучение</h3>');
             Результат (y):<br>
             <textarea name="sYs_real" disabled></textarea>
         </div>
-    <div>
-    Веса (w): <input type="input" name="W" value="[ [[-1,2,-1], [1,-1,0] ], [[1,3,0]]]">
-    <input type="button" onclick="copyW1(this)" value="Взять из обучения">
-    <br>
-    <!--Значение смещения (b): <input type="input" name="b" value="1" size="3"><br>-->
+    </div>
+</fieldset>
 
-    <input type="button" onclick="startUsing(this)" value="Посмотреть результат">
+<fieldset>
     <input type="checkbox" name="show_log" checked>
     Выводить лог
+</fieldset>
+
+    <input type="button" onclick="startUsing(this)" value="Посмотреть результат">
 
 </form>
 
