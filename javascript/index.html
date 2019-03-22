@@ -16,7 +16,6 @@ window.onerror = function (message, url, lineNo, colNo, e){ alert('Error: ' + me
     <script src="neurolego/use.js"></script>
     <script src="lib.js"></script>
     <script src="index.js"></script>
-    <script src="dataset/mnist/index.js"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="HandheldFriendly" content="true" />
@@ -241,7 +240,11 @@ a.m.write(m1);
     <div id='source_input_files'>
          Директория с набором входных данных:
          <br>
-         <input type="text" name="source_dir">
+         <input type="text" name="source_dir" onchange="setInputMetaData(this)">
+         <div id="source_input_files_meta"></div>
+         <input type="checkbox" name="source_dir_is_length">
+         Ограничить кол-во примеров:
+         <input type="text" name="source_dir_length" size="5">
     </div>
 </fieldset>
 

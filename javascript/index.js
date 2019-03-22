@@ -55,6 +55,9 @@ function setOptsToFormStudy(form, opts) {
         form.source_input.value = opts.source_input;
         form.source_dir.value = opts.source_dir,
 
+        form.source_dir_is_length.checked = opts.source_dir_is_length,
+        form.source_dir_length.value = opts.source_dir_length,
+
         form.speed_study.value = opts.speed_study;
         form.restart_study.checked = opts.restart_study;
         form.restart_study_count.value=opts.restart_study_count;
@@ -75,6 +78,9 @@ function collectOptsFromFormStudy(form) {
         sYs_ideal: JSON.parse(form.sYs_ideal.value),
         source_input: form.source_input.value,
         source_dir: form.source_dir.value,
+
+        source_dir_is_length: form.source_dir_is_length.checked,
+        source_dir_length: form.source_dir_length.value,
 
         speed_study: form.speed_study.value,
         restart_study: form.restart_study.checked,
@@ -118,6 +124,7 @@ function startStudy(btn) {
     } else if (opts.source_input === 'files') {
         let source_dir = opts.source_dir;
         opts.sets_study = new DataSeter(source_dir);
+        if (opts.source_dir_is_length) opts.sets_study.length = opts.source_dir_length;
     }
 
     let t1 = (new Date()).getMilliseconds();
@@ -197,4 +204,10 @@ function selectSourceInput(name) {
 
     if (name==='form') document.getElementById('source_input_form').style.display = 'block';
     if (name==='files') document.getElementById('source_input_files').style.display = 'block';
+}
+
+function setInputMetaData(input) {
+        let ds = new DataSeter(input.value);
+        document.getElementById('source_input_files_meta').innerHTML = 'Количество примеров: '+ds.length;
+        input.form.count_input.value = ds.count_input;
 }

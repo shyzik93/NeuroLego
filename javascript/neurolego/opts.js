@@ -42,6 +42,8 @@ function Opts() {
             if (opts.restart_study === undefined) opts.restart_study = false;
             if (opts.restart_study_count === undefined) opts.restart_study_count = 0;
             if (opts.show_log_era_in_step === undefined) opts.show_log_era_in_step = 1;
+            if (opts.source_dir_is_length === undefined) opts.source_dir_is_length = false;
+            if (opts.source_dir_length === undefined) opts.source_dir_length = 0;
         }
 
         /* коррекция опций. Например, строку в число конвертируем */
@@ -58,6 +60,7 @@ function Opts() {
             opts.speed_study = parseFloat(opts.speed_study);
             opts.restart_study_count = parseInt(opts.restart_study_count);
             opts.show_log_era_in_step = parseInt(opts.show_log_era_in_step);
+            opts.source_dir_length = parseInt(opts.source_dir_length);
         }
 
     }

@@ -13,7 +13,7 @@ function Vector(func_write_log) {
 
     this.check_size = function(v1, v2) {
         if (v1.length !== v2.length) {
-            alert('Векторы '+JSON.stringify(v1)+'  и '+JSON.stringify(v2)+' имеют разную размерность!');
+            alert('Векторы '+JSON.stringify(v1)+'  и '+JSON.stringify(v2)+' имеют разную размерность! ('+v1.length+' и '+v2.length+')');
             exit();
         }
     }
