@@ -222,21 +222,33 @@ a.m.write(m1);
 </fieldset>
 
 <fieldset>
-   <div class="examples">
-        <div class="x">
-            Входные данные (x):<br>
-            <textarea name="Xs" onchange="calcCountInput(this)">[[0, 0], [0, 1], [1, 0], [1,1]]</textarea>
-        </div><div class="y">
-            Результат (y):<br>
-            <textarea name="sYs_ideal">[[0], [1], [1], [0]]</textarea>
+    Источник входных наборов: <select onchange="selectSourceInput(this.value);" name="source_input">
+        <option value='form' selected>Форма</option>
+        <option value='files'>Подгрузка из файлов</option>
+    </select>
+    <br>
+    <div id='source_input_form'>
+        <div class="examples">
+            <div class="x">
+                Входные данные (x):<br>
+                <textarea name="Xs" onchange="calcCountInput(this)">[[0, 0], [0, 1], [1, 0], [1,1]]</textarea>
+            </div><div class="y">
+                Результат (y):<br>
+                <textarea name="sYs_ideal">[[0], [1], [1], [0]]</textarea>
+            </div>
         </div>
+    </div>
+    <div id='source_input_files'>
+         Директория с набором входных данных:
+         <br>
+         <input type="text" name="source_dir">
     </div>
 </fieldset>
 
 <fieldset>
     Число эпох: <input type="input" name="count_era" value="50" size="6">
     <br>
-    Скорость обучения: <input type="input" name="speed_study" value="1" size="6">
+    Скорость обучения: <input type="text" name="speed_study" value="1" size="6">
     <br>
     <input type="checkbox" name="show_log" checked>
     Выводить лог через каждые <input type="text" value="50" name="show_log_era_in_step" size="3"> эпох
@@ -301,6 +313,7 @@ a.m.write(m1);
 </form>
 
 <script>
+selectSourceInput('form');
 //let M = a.v.MultiplyScal(v1, v3);
 //alert(M);
 //alert(L1 * L3 * Math.cos(Math.atan2(L1,L3)))

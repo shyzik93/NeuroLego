@@ -1,12 +1,12 @@
-function DataSeter() {
+function DataSeter(source_dir) {
 
     self = this;
     this.sub_dataset = null;
     this.pair = null;
     this.f = null;
-    
 
-    this.length = 100;
+    this.length = 500;
+    this.source_dir = source_dir;
 
     // входов: 784
 
@@ -32,7 +32,7 @@ function DataSeter() {
     this.get_dataset = function(index) {
         let i = index % 50; // индекс в поднаборе
         let f = (index  -  i) + 50; // имя файла
-        let fname = 'mnist/dataset/'+f;
+        let fname = self.source_dir + '/dataset/' + f;
 
         if (self.sub_dataset === null | self.f !== f) {
             self.f = f;

@@ -52,6 +52,9 @@ _CopyToClipboard(document.getElementById('form_study'));
 function setOptsToFormStudy(form, opts) {
         form.Xs.value = JSON.stringify(opts.Xs);
         form.sYs_ideal.value = JSON.stringify(opts.sYs_ideal);
+        form.source_input.value = opts.source_input;
+        form.source_dir.value = opts.source_dir,
+
         form.speed_study.value = opts.speed_study;
         form.restart_study.checked = opts.restart_study;
         form.restart_study_count.value=opts.restart_study_count;
@@ -70,6 +73,9 @@ function collectOptsFromFormStudy(form) {
     let opts = {
         Xs: JSON.parse(form.Xs.value),
         sYs_ideal: JSON.parse(form.sYs_ideal.value),
+        source_input: form.source_input.value,
+        source_dir: form.source_dir.value,
+
         speed_study: form.speed_study.value,
         restart_study: form.restart_study.checked,
         restart_study_count: form.restart_study_count.value,
@@ -106,8 +112,14 @@ function startStudy(btn) {
     let opts = collectOptsFromFormStudy(btn.form);
 
     opts.func_write_log = writeLog;
-    opts.sets_study = new Sets_Array(opts.Xs, opts.sYs_ideal);
-    //opts.sets_study = new DataSeter();
+
+    if (opts.source_input === 'form') {
+        opts.sets_study = new Sets_Array(opts.Xs, opts.sYs_ideal);
+    } else if (opts.source_input === 'files') {
+        let source_dir = opts.source_dir;
+        opts.sets_study = new DataSeter(source_dir);
+    }
+
     let t1 = (new Date()).getMilliseconds();
     let is_studied = s.study(opts);
     let t2 = (new Date()).getMilliseconds();
@@ -177,4 +189,12 @@ function actionsStudy(select) {
         select.value = 'actions';
     }
 
+}
+
+function selectSourceInput(name) {
+    document.getElementById('source_input_form').style.display = 'none';
+    document.getElementById('source_input_files').style.display = 'none';
+
+    if (name==='form') document.getElementById('source_input_form').style.display = 'block';
+    if (name==='files') document.getElementById('source_input_files').style.display = 'block';
 }
