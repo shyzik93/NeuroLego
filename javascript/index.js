@@ -208,6 +208,6 @@ function selectSourceInput(name) {
 
 function setInputMetaData(input) {
         let ds = new DataSeter(input.value);
-        document.getElementById('source_input_files_meta').innerHTML = 'Количество примеров: '+ds.length;
+        document.getElementById('source_input_files_meta').innerHTML = 'Количество примеров: '+ds.length +'<br>Количество нейронов в последнем слое: '+ds.count_output;
         input.form.count_input.value = ds.count_input;
 }

@@ -31,7 +31,8 @@ function DataSeter(source_dir) {
     this.length = null;
     this.sub_length = null;
     this.count_input = null; // для генератора весов
-    this.source_dir = 'dataset/' + source_dir + '/dataset/';
+    this.count_output = null;
+    this.source_dir = 'dataset/' + source_dir + '/';
 
     /*this.import_datasets2 = function(name) {
         let script = document.getElementById('NL_dataset_el');
@@ -82,6 +83,7 @@ function DataSeter(source_dir) {
         self.length = data.count_total;
         self.sub_length = data.count_in_file;
         self.count_input = data.count_input;
+        self.count_output = data.count_output;
     }, false);
 
 }
