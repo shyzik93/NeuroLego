@@ -17,13 +17,14 @@ function Use() {
 
             let sY_real, sW;
 
-            let X = opts.sets_using.get_x_example(ix);
+            let X = self.m.createFromVect(opts.sets_using.get_x_example(ix), true);
+            self.m.T(X);
 
             if(opts.show_log) opts.func_write_log('Вход (x): ');
             if(opts.show_log) self.v.write(X, opts.func_write_log);
             if(opts.show_log) opts.func_write_log('\n');
 
-            X.push(opts.b);
+            //X.push(opts.b);
 
             // перебираем слои
             for (let il=0;il<opts.W.length;il++) {
@@ -33,17 +34,21 @@ function Use() {
                     } else { opts.func_write_log('  Слой '+(il+1)+': '); }
                  }
 
-                if (il > 0) {X = sY_real; X.push(opts.b);}
+                if (il > 0) {X = sY_real; /*X.push(opts.b);*/}
 
                 // перебираем нейроны в слое
 
-                sY_real = []; // выходы для слоя
+                sY_real = self.m.Multiply(opts.W[il], X);
+                self.m.MultiplyFunc(sY_real, opts.neuron);
+                self.m.T(sY_real);
+
+                /*sY_real = []; // выходы для слоя
                 sW = opts.W[il]; // веса для нейронов в слое
                 for (let iw = 0; iw<sW.length; iw++) {
                     let _nY_real = self.n.sum(X, sW[iw]);
                     let nY_real = opts.neuron(_nY_real);
                     sY_real.push(nY_real);
-                }
+                }*/
 
                 if(opts.show_log) self.v.write(sY_real, opts.func_write_log);
                 if(opts.show_log) opts.func_write_log('\n');

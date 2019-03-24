@@ -70,15 +70,22 @@ function Vector(func_write_log) {
     }
 
     /* векторное произведение векторов ( v2 x v2 )*/
-    this.MultiplyVect = function(v1, v2) {
+    this.MultiplyVect = function(v1, v2, offset) {
+        if (offset === undefined) offset = 0;
         self.check_size(v1, v2);
-        for (let i=0; i < v1.length; i++) v1[i] = v1[i] * v2[i];
+        for (let i=0; i < v1.length-offset; i++) v1[i] = v1[i] * v2[i];
     }
 
     /* векторное умножение вектора на число ( v1 * c )*/
     this.MultiplyVectConst = function(v1, c, offset) {
         if (offset === undefined) offset = 0;
         for (let i=0; i < v1.length-offset; i++) v1[i] = v1[i] * c;
+    }
+
+    /* векторное умножение вектора на функцию ( v1 * f )*/
+    this.MultiplyVectFunc = function(v1, f, offset) {
+        if (offset === undefined) offset = 0;
+        for (let i=0; i < v1.length-offset; i++) v1[i] = f(v1[i]);
     }
 
     /* генерация вектора
@@ -92,9 +99,11 @@ function Vector(func_write_log) {
         for (let i=v.length; i < n; i++) {
             if (content === 'ones') _content = 1;
             else if (content === 'zeros') _content = 0;
-            else if (content === 'random') _content = Math.round(Math.random() * 10);
+            //else if (content === 'random') _content = Math.round(Math.random() * 10);
+            else if (content === 'random') _content = Math.random();
             v.push(_content);
         }
+        self.SumConst(v, -0.5);
         return v;
       }
 
@@ -187,6 +196,11 @@ function Matrix(v) {
         this.v.Sum(m1, m2, this.offset);
     }
 
+   /* сложение матрицы с константой (m1 + c) */
+    this.SumConst = function(m1, c) {
+        this.v.SumConst(m1, c, this.offset);
+    }
+
     /* вычитание матриц (m1 - m2) */
     this.Diff = function(m1, m2) {
         this.check_size(m1, m2);
@@ -197,12 +211,22 @@ function Matrix(v) {
     this.MultiplyConst = function(m1, c) {
         this.v.MultiplyVectConst(m1, c, this.offset);
     }
+    /* умножение матрицы на функцию ( m1 * f )*/
+    this.MultiplyFunc = function(m1, f) {
+        this.v.MultiplyVectFunc(m1, f, this.offset);
+    }
+
+    /* переумножение элементов матриц ( m1 * m2 ) */
+    this.MultiplySimple = function(m1, m2) {
+        this.check_size(m1, m2);
+        this.v.MultiplyVect(m1, m2, this.offset);
+    }
 
     /* умножение матриц ( m1 @ m2 ) */
     this.Multiply = function(m1, m2) {
         // check size
         if (this.countCols(m1) !== this.countRows(m2)) {
-            alert('Число столбцов первой матрицы не равно числу рядов второй!!');
+            alert('Число столбцов первой матрицы не равно числу рядов второй! ('+JSON.stringify([[this.countCols(m1), this.countRows(m1)], [this.countCols(m2), this.countRows(m2)]])+' )');
             exit();
         }
 
@@ -246,7 +270,7 @@ function Matrix(v) {
     }
 
    /* транспонирование матрицы ( (m1)T ) */
-    this.T2 = function(m1) {
+    this.T = function(m1) {
         let tmp = this.countRows(m1);
         this.setCountRows(m1, this.countCols(m1));
         this.setCountCols(m1, tmp);
@@ -270,6 +294,17 @@ function Matrix(v) {
         this.setCountCols(m1, n);
         this.setCountRows(m1, m);
         return m1;
+    }
+
+    this.createFromVect = function(vector, copy) {
+        let v;
+        if (copy) v = vector.slice();
+        else v = vector;
+
+        this.pushMetaInfo(v);
+        this.setCountCols(v, vector.length);
+        this.setCountRows(v, 1);
+        return v;
     }
 
     this.write = function(m1) {
