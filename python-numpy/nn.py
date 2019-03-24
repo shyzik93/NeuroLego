@@ -3,6 +3,10 @@ import scipy.special
 import csv
 import json
 
+'''   Код берёт начало из примера книги
+    Тарик Рашид "Создаём нейронную сеть"
+'''
+
 class neuralNetwork:
 
     def __init__(self, inputnodes, hiddennodes, outputnodes, learningrate):
