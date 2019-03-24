@@ -21,7 +21,7 @@ function Sets_Array(x_examples, y_examples) {
     }
 }
 
-function DataSeter(source_dir) {
+function DataSeter(source_dir, type) {
 
     self = this;
     this.sub_dataset = null;
@@ -32,8 +32,8 @@ function DataSeter(source_dir) {
     this.sub_length = null;
     this.count_input = null; // для генератора весов
     this.count_output = null;
-    this.source_dir = 'dataset/' + source_dir + '/';
-
+    this.source_dir = 'dataset/'+source_dir+'/'+type+'/'; // type='study' or 'use'
+ 
     /*this.import_datasets2 = function(name) {
         let script = document.getElementById('NL_dataset_el');
         if (script) script.remove();

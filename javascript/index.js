@@ -74,13 +74,7 @@ function setOptsToFormStudy(form, opts) {
 
 function collectOptsFromFormStudy(form) {
     let opts = {
-        Xs: JSON.parse(form.Xs.value),
         sYs_ideal: JSON.parse(form.sYs_ideal.value),
-        source_input: form.source_input.value,
-        source_dir: form.source_dir.value,
-
-        source_dir_is_length: form.source_dir_is_length.checked,
-        source_dir_length: form.source_dir_length.value,
 
         speed_study: form.speed_study.value,
         restart_study: form.restart_study.checked,
@@ -91,6 +85,11 @@ function collectOptsFromFormStudy(form) {
         show_log_era_in_step: form.show_log_era_in_step.value,
         method_study: form.method_study.value,
 
+        Xs: JSON.parse(form.Xs.value),
+        source_input: form.source_input.value,
+        source_dir: form.source_dir.value,
+        source_dir_is_length: form.source_dir_is_length.checked,
+        source_dir_length: form.source_dir_length.value,
         show_log: form.show_log.checked,
         neuron: form.neuron.value
         //b: form.b.value
@@ -100,9 +99,13 @@ function collectOptsFromFormStudy(form) {
 
 function collectOptsFromFormUsing(form) {
     let opts = {
-        Xs: JSON.parse(form.Xs.value),
         W: JSON.parse(form.W.value),
 
+        Xs: JSON.parse(form.Xs.value),
+        source_input: form.source_input.value,
+        source_dir: form.source_dir.value,
+        source_dir_is_length: form.source_dir_is_length.checked,
+        source_dir_length: form.source_dir_length.value,
         show_log: form.show_log.checked,
         neuron: form.neuron.value
         //b: form.b.value
@@ -123,7 +126,7 @@ function startStudy(btn) {
         opts.sets_study = new Sets_Array(opts.Xs, opts.sYs_ideal);
     } else if (opts.source_input === 'files') {
         let source_dir = opts.source_dir;
-        opts.sets_study = new DataSeter(source_dir);
+        opts.sets_study = new DataSeter(source_dir, 'study');
         if (opts.source_dir_is_length) opts.sets_study.length = opts.source_dir_length;
     }
 
@@ -148,7 +151,14 @@ function startUsing(btn) {
     let opts = collectOptsFromFormUsing(btn.form);
 
     opts.func_write_log = writeLog;
-    opts.sets_using = new Sets_Array(opts.Xs);
+
+    if (opts.source_input === 'form') {
+        opts.sets_study = new Sets_Array(opts.Xs);
+    } else if (opts.source_input === 'files') {
+        let source_dir = opts.source_dir;
+        opts.sets_using = new DataSeter(source_dir, 'use');
+        if (opts.source_dir_is_length) opts.sets_using.length = opts.source_dir_length;
+    }
 
     let t1 = (new Date()).getMilliseconds();
     u.use(opts);
@@ -198,16 +208,16 @@ function actionsStudy(select) {
 
 }
 
-function selectSourceInput(name) {
-    document.getElementById('source_input_form').style.display = 'none';
-    document.getElementById('source_input_files').style.display = 'none';
+function selectSourceInput(form, name) {
+    form.querySelector('.source_input_form').style.display = 'none';
+    form.querySelector('.source_input_files').style.display = 'none';
 
-    if (name==='form') document.getElementById('source_input_form').style.display = 'block';
-    if (name==='files') document.getElementById('source_input_files').style.display = 'block';
+    if (name==='form') form.querySelector('.source_input_form').style.display = 'block';
+    if (name==='files') form.querySelector('.source_input_files').style.display = 'block';
 }
 
 function setInputMetaData(input) {
         let ds = new DataSeter(input.value);
-        document.getElementById('source_input_files_meta').innerHTML = 'Количество примеров: '+ds.length +'<br>Количество нейронов в последнем слое: '+ds.count_output;
-        input.form.count_input.value = ds.count_input;
+        input.form.querySelector('.source_input_files_meta').innerHTML = 'Количество примеров: '+ds.length +'<br>Количество нейронов в последнем слое: '+ds.count_output;
+        if(input.form.count_input) input.form.count_input.value = ds.count_input;
 }

@@ -20,9 +20,9 @@ function Use() {
             let X = self.m.createFromVect(opts.sets_using.get_x_example(ix), true);
             self.m.T(X);
 
-            if(opts.show_log) opts.func_write_log('Вход (x): ');
-            if(opts.show_log) self.v.write(X, opts.func_write_log);
-            if(opts.show_log) opts.func_write_log('\n');
+            //if(opts.show_log) opts.func_write_log('Вход (x): ');
+            //if(opts.show_log) self.v.write(X, opts.func_write_log);
+            //if(opts.show_log) opts.func_write_log('\n');
 
             //X.push(opts.b);
 
@@ -30,8 +30,10 @@ function Use() {
             for (let il=0;il<opts.W.length;il++) {
 
                 if(opts.show_log) {
-                    if (il === opts.W.length-1) {opts.func_write_log('  Выход (y): ');
-                    } else { opts.func_write_log('  Слой '+(il+1)+': '); }
+                    if (il === opts.W.length-1) {
+    opts.func_write_log('Верный ответ: '+JSON.stringify(opts.sets_using.get_y_example(ix))+'\n');
+                        opts.func_write_log('  Выход (y): ');
+                    } // else { opts.func_write_log('  Слой '+(il+1)+': '); }
                  }
 
                 if (il > 0) {X = sY_real; /*X.push(opts.b);*/}
@@ -50,9 +52,10 @@ function Use() {
                     sY_real.push(nY_real);
                 }*/
 
-                if(opts.show_log) self.v.write(sY_real, opts.func_write_log);
-                if(opts.show_log) opts.func_write_log('\n');
-
+                if (il === opts.W.length-1) {
+                    if(opts.show_log) self.v.write(sY_real, opts.func_write_log);
+                    if(opts.show_log) opts.func_write_log('\n');
+                }
             }
         }
     }
