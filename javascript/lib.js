@@ -46,35 +46,38 @@ function DataSeter(source_dir, type) {
     }*/
 
     this.load_data = function(name, func, is_async) {
-        let url = self.source_dir  + name + '.json';
+        let url = this.source_dir  + name + '.json';
         let req = new XMLHttpRequest();
-        req.open('get', url, is_async);
-        req.send();
-        if (is_async) {req.onreadystatechange = func;}
-        else {func(req, self);}
+        req.open('GET', url, is_async);
+
+        if (is_async) {req.onreadystatechange = function(req) {func(req, this);};}
+
+        req.send(null);
+
+        if (!is_async) {func(req, this);}
     }
 
     this.get_dataset = function(index) {
-        let i = index % self.sub_length; // индекс в поднаборе
-        let fname = (index  -  i) + self.sub_length; // имя файла
+        let i = index % this.sub_length; // индекс в поднаборе
+        let fname = (index  -  i) + this.sub_length; // имя файла
 
-        if (self.sub_dataset === null | self.fname !== fname) {
-            self.fname = fname;
-            self.load_data(fname, function(req, self) {
+        if (this.sub_dataset === null | this.fname !== fname) {
+            this.fname = fname;
+            this.load_data(fname, function(req, self) {
                 self.sub_dataset = JSON.parse(req.responseText);
             }, false);
         }
-        self.pair = self.sub_dataset[i];
+        this.pair = this.sub_dataset[i];
     }
 
     this.get_x_example = function(ix) {
-        self.get_dataset(ix);
-        return self.pair[1].slice();
+        this.get_dataset(ix);
+        return this.pair[1].slice();
     }
 
     this.get_y_example = function(iy) {
-        self.get_dataset(iy);
-        return self.pair[0];
+        this.get_dataset(iy);
+        return this.pair[0];
     } 
 
     // вызов функции при инициализации класса

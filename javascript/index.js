@@ -9,7 +9,7 @@ function writeLog(text) {
     document.getElementById('form_log').log.value += text;
 }
 function clearLog() {
-    document.getElementById('form_log').log.value = '';
+    document.getElementById('form_log').log.value = "";
 }
 
 function _CopyToClipboard(el) {
@@ -116,55 +116,45 @@ function collectOptsFromFormUsing(form) {
 function startStudy(btn) {
 
     clearLog();
-    let s = new Study();
 
     let opts = collectOptsFromFormStudy(btn.form);
 
-    opts.func_write_log = writeLog;
-
-    if (opts.source_input === 'form') {
-        opts.sets_study = new Sets_Array(opts.Xs, opts.sYs_ideal);
-    } else if (opts.source_input === 'files') {
-        let source_dir = opts.source_dir;
-        opts.sets_study = new DataSeter(source_dir, 'study');
-        if (opts.source_dir_is_length) opts.sets_study.length = opts.source_dir_length;
+    if (window.Worker) {
+        const myWorker = new Worker("worker.js");
+        myWorker.postMessage([opts, 'study']);
+        myWorker.onmessage = function(e) {
+            if (e.data[0] === 'msg') {
+                writeLog(e.data[1]);
+            } else if (e.data[0] === 'result') {
+                btn.form.W.value = JSON.stringify(e.data[1].W);
+            }
+        }
+    } else {
+        alert('Your browser doesn\'t support web workers.')
     }
-
-    let t1 = (new Date()).getMilliseconds();
-    let is_studied = s.study(opts);
-    let t2 = (new Date()).getMilliseconds();
-    writeLog('Прошло секунд: '+ ((t1-t2)/1000)+'\n');
-    if (is_studied) { writeLog('Обучение завершено'); }
-    else { writeLog('Обучение не закончилось'); }
-
-    writeLog('\nw1: ');
-    s.v.write(opts.W, writeLog);
-
-    btn.form.W.value = JSON.stringify(opts.W);
 }
 
 function startUsing(btn) {
 
     clearLog();
-    let u = new Use();
 
     let opts = collectOptsFromFormUsing(btn.form);
 
-    opts.func_write_log = writeLog;
+    if (window.Worker) {
 
-    if (opts.source_input === 'form') {
-        opts.sets_study = new Sets_Array(opts.Xs);
-    } else if (opts.source_input === 'files') {
-        let source_dir = opts.source_dir;
-        opts.sets_using = new DataSeter(source_dir, 'use');
-        if (opts.source_dir_is_length) opts.sets_using.length = opts.source_dir_length;
+        const myWorker = new Worker("worker.js");
+        myWorker.postMessage([opts, 'use']);
+        myWorker.onmessage = function(e) {
+            if (e.data[0] === 'msg') {
+                writeLog(e.data[1]);
+            } else if (e.data[0] === 'result') {
+                //btn.form.W.value = JSON.stringify(e.data[1].W);
+            }
+        }
+
+    } else {
+        alert('Your browser doesn\'t support web workers.');
     }
-
-    let t1 = (new Date()).getMilliseconds();
-    u.use(opts);
-    let t2 = (new Date()).getMilliseconds();
-    writeLog('Прошло секунд: '+ ((t1-t2)/1000)+'\n')
-
 }
 
 function copyW1(btn) {
@@ -217,7 +207,7 @@ function selectSourceInput(form, name) {
 }
 
 function setInputMetaData(input) {
-        let ds = new DataSeter(input.value);
+        let ds = new DataSeter(input.value, input.form.count_input ? 'study' : 'use');
         input.form.querySelector('.source_input_files_meta').innerHTML = 'Количество примеров: '+ds.length +'<br>Количество нейронов в последнем слое: '+ds.count_output;
         if(input.form.count_input) input.form.count_input.value = ds.count_input;
 }
