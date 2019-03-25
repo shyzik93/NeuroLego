@@ -72,8 +72,11 @@ function setOptsToFormStudy(form, opts) {
         //form.b.value = opts.b;
 }
 
-function collectOptsFromFormStudy(form) {
-    let opts = {
+function collectOptsFromForm(form, type) {
+
+    if (type === 'study') {
+
+    return {
         sYs_ideal: JSON.parse(form.sYs_ideal.value),
 
         speed_study: form.speed_study.value,
@@ -93,12 +96,11 @@ function collectOptsFromFormStudy(form) {
         show_log: form.show_log.checked,
         neuron: form.neuron.value
         //b: form.b.value
-    }
-    return opts;
-}
+    };
 
-function collectOptsFromFormUsing(form) {
-    let opts = {
+    } else if (type === 'use') {
+
+    return {
         W: JSON.parse(form.W.value),
 
         Xs: JSON.parse(form.Xs.value),
@@ -109,51 +111,29 @@ function collectOptsFromFormUsing(form) {
         show_log: form.show_log.checked,
         neuron: form.neuron.value
         //b: form.b.value
+    };
+
     }
-    return opts;
 }
 
-function startStudy(btn) {
+function RunNN(btn, type) {
 
     clearLog();
 
-    let opts = collectOptsFromFormStudy(btn.form);
+    let opts = collectOptsFromForm(btn.form, type);
 
     if (window.Worker) {
         const myWorker = new Worker("worker.js");
-        myWorker.postMessage([opts, 'study']);
+        myWorker.postMessage([opts, type]);
         myWorker.onmessage = function(e) {
             if (e.data[0] === 'msg') {
                 writeLog(e.data[1]);
             } else if (e.data[0] === 'result') {
-                btn.form.W.value = JSON.stringify(e.data[1].W);
+                if (type==='study') btn.form.W.value = JSON.stringify(e.data[1].W);
             }
         }
     } else {
         alert('Your browser doesn\'t support web workers.')
-    }
-}
-
-function startUsing(btn) {
-
-    clearLog();
-
-    let opts = collectOptsFromFormUsing(btn.form);
-
-    if (window.Worker) {
-
-        const myWorker = new Worker("worker.js");
-        myWorker.postMessage([opts, 'use']);
-        myWorker.onmessage = function(e) {
-            if (e.data[0] === 'msg') {
-                writeLog(e.data[1]);
-            } else if (e.data[0] === 'result') {
-                //btn.form.W.value = JSON.stringify(e.data[1].W);
-            }
-        }
-
-    } else {
-        alert('Your browser doesn\'t support web workers.');
     }
 }
 
@@ -184,7 +164,7 @@ function calcCountInput(field) {
 
 function actionsStudy(select) {
     if (select.value === 'export') {
-        let opts = collectOptsFromFormStudy(select.form);
+        let opts = collectOptsFromForm(select.form, 'study');
         select.form.sYs_ideal.value = JSON.stringify(opts);
         //copyToClipboard(JSON.stringify(opts));
     } else if (select.value === 'import') {

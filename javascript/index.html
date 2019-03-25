@@ -260,7 +260,7 @@ a.m.write(m1);
     Перезапускать обучение <input type="text" value="50" name="restart_study_count" size="3"> раз (если решение не найдено)
 </fieldset>
 
-    <input type="button" onclick="startStudy(this)" value="Начать обучение">
+    <input type="button" onclick="RunNN(this, 'study')" value="Обучить">
     <select onchange="actionsStudy(this);">
         <option value='actions'>Действия</option>
         <option value='export'>Экспорт в буфер</option>
@@ -322,7 +322,7 @@ a.m.write(m1);
     Выводить лог
 </fieldset>
 
-    <input type="button" onclick="startUsing(this)" value="Посмотреть результат">
+    <input type="button" onclick="RunNN(this, 'use')" value="Использовать">
 
 </form>
 
