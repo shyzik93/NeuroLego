@@ -3,8 +3,6 @@
     Start date: 2019-03-10 05:30
 */
 
-var a = new Algebra();
-
 function writeLog(text) {
     document.getElementById('form_log').log.value += text;
 }
@@ -49,7 +47,8 @@ _CopyToClipboard(document.getElementById('form_study'));
     $temp.remove();*/
 }
 
-function setOptsToFormStudy(form, opts) {
+function setOptsToForm(form, opts) {
+        form.W.value = JSON.stringify(opts.W);
         form.Xs.value = JSON.stringify(opts.Xs);
         form.sYs_ideal.value = JSON.stringify(opts.sYs_ideal);
         form.source_input.value = opts.source_input;
@@ -72,12 +71,23 @@ function setOptsToFormStudy(form, opts) {
         //form.b.value = opts.b;
 }
 
-function collectOptsFromForm(form, type) {
+function collectOptsFromForm(form) {
 
-    if (type === 'study') {
+    let W = null, Xs = [], sYs_ideal = [];
+
+    try { W = JSON.parse(form.W.value); }
+    catch { alert("Синтаксическая ошибка в весах (W)!"); }
+
+    try { Xs = JSON.parse(form.Xs.value); }
+    catch { alert("Синтаксическая ошибка в примерах (Xs)!"); }
+
+    try { sYs_ideal = JSON.parse(form.sYs_ideal.value); }
+    catch { alert("Синтаксическая ошибка в примерах (sYs_ideal)!"); }
 
     return {
-        sYs_ideal: JSON.parse(form.sYs_ideal.value),
+        W: W,
+
+        sYs_ideal: sYs_ideal,
 
         speed_study: form.speed_study.value,
         restart_study: form.restart_study.checked,
@@ -88,7 +98,7 @@ function collectOptsFromForm(form, type) {
         show_log_era_in_step: form.show_log_era_in_step.value,
         method_study: form.method_study.value,
 
-        Xs: JSON.parse(form.Xs.value),
+        Xs: Xs,
         source_input: form.source_input.value,
         source_dir: form.source_dir.value,
         source_dir_is_length: form.source_dir_is_length.checked,
@@ -97,30 +107,13 @@ function collectOptsFromForm(form, type) {
         neuron: form.neuron.value
         //b: form.b.value
     };
-
-    } else if (type === 'use') {
-
-    return {
-        W: JSON.parse(form.W.value),
-
-        Xs: JSON.parse(form.Xs.value),
-        source_input: form.source_input.value,
-        source_dir: form.source_dir.value,
-        source_dir_is_length: form.source_dir_is_length.checked,
-        source_dir_length: form.source_dir_length.value,
-        show_log: form.show_log.checked,
-        neuron: form.neuron.value
-        //b: form.b.value
-    };
-
-    }
 }
 
 function RunNN(btn, type) {
 
     clearLog();
 
-    let opts = collectOptsFromForm(btn.form, type);
+    let opts = collectOptsFromForm(btn.form);
 
     if (window.Worker) {
         const myWorker = new Worker("worker.js");
@@ -128,6 +121,8 @@ function RunNN(btn, type) {
         myWorker.onmessage = function(e) {
             if (e.data[0] === 'msg') {
                 writeLog(e.data[1]);
+            } else if (e.data[0] === 'alert') {
+                alert(e.data[1]);
             } else if (e.data[0] === 'result') {
                 if (type==='study') btn.form.W.value = JSON.stringify(e.data[1].W);
             }
@@ -135,16 +130,6 @@ function RunNN(btn, type) {
     } else {
         alert('Your browser doesn\'t support web workers.')
     }
-}
-
-function copyW1(btn) {
-    let form_study = document.getElementById('form_study');
-    let W = form_study.W.value;
-    if (W === '') {
-        alert('Результатов весов нет! Возможно, обучения ещё не происходило.');
-        return;
-    }
-    btn.form.W.value = W;
 }
 
 function calcCountInput(field) {
@@ -164,12 +149,12 @@ function calcCountInput(field) {
 
 function actionsStudy(select) {
     if (select.value === 'export') {
-        let opts = collectOptsFromForm(select.form, 'study');
+        let opts = collectOptsFromForm(select.form);
         select.form.sYs_ideal.value = JSON.stringify(opts);
         //copyToClipboard(JSON.stringify(opts));
     } else if (select.value === 'import') {
         let opts = JSON.parse(select.form.sYs_ideal.value);
-        setOptsToFormStudy(select.form, opts);
+        setOptsToForm(select.form, opts);
     }
 
     if (select.value !== 'actions') {

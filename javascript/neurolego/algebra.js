@@ -13,8 +13,8 @@ function Vector(func_write_log) {
 
     this.check_size = function(v1, v2) {
         if (v1.length !== v2.length) {
-            alert('Векторы '+JSON.stringify(v1)+'  и '+JSON.stringify(v2)+' имеют разную размерность! ('+v1.length+' и '+v2.length+')');
-            exit();
+            postMessage(['alert', 'Векторы '+JSON.stringify(v1)+'  и '+JSON.stringify(v2)+' имеют разную размерность! ('+v1.length+' и '+v2.length+')']);
+            close();
         }
     }
 
@@ -107,12 +107,11 @@ function Vector(func_write_log) {
         return v;
       }
 
-    this.write = function(v1, func_write_log) {
-        if(func_write_log === undefined) func_write_log = console.log;
+    this.write = function(v1) {
 
         for (let i=0; i < v1.length; i++) {
-            func_write_log(v1[i]);
-            func_write_log(' ');
+            postMessage(['msg', v1[i]]);
+            postMessage(['msg', ' ']);
         }
     }
 }
@@ -185,8 +184,8 @@ function Matrix(v) {
     this.check_size = function(m1, m2) {
         if (this.countRows(m1) !== this.countRows(m2)
              || this.countCols(m1) !== this.countCols(m2)) {
-            alert('Матрицы имеют разную размерность!');
-            exit();
+            postMessage(['alert', 'Матрицы имеют разную размерность!']);
+            close();
         }
     }
 
@@ -226,8 +225,8 @@ function Matrix(v) {
     this.Multiply = function(m1, m2) {
         // check size
         if (this.countCols(m1) !== this.countRows(m2)) {
-            alert('Число столбцов первой матрицы не равно числу рядов второй! ('+JSON.stringify([[this.countCols(m1), this.countRows(m1)], [this.countCols(m2), this.countRows(m2)]])+' )');
-            exit();
+            postMessage(['alert', 'Число столбцов первой матрицы не равно числу рядов второй! ('+JSON.stringify([[this.countCols(m1), this.countRows(m1)], [this.countCols(m2), this.countRows(m2)]])+' )']);
+            close();
         }
 
         let m3 = [];
@@ -259,7 +258,7 @@ function Matrix(v) {
         for (let i=0; i < this.countRows(m1); i++) {
             for (let j=0; j < this.countCols(m1); j++) {
                 tmp = this.getCell(m1, j, i);
-                alert(j+','+i+' '+tmp);
+                postMessage(['alert', j+','+i+' '+tmp]);
                 this.setCell(m1, j, i, this.getCell(m1, i, j));
                 this.setCell(m1, i, j, tmp);
             }
@@ -312,10 +311,10 @@ function Matrix(v) {
         for (let i=0; i < this.countRows(m1); i++) {
             for (let j=0; j < this.countCols(m1); j++) {
                 ceil = this.getCell(m1, j, i);
-                document.write(ceil);
-                document.write(' ');
+                postMessage(['msg', ceil]);
+                postMessage(['msg', ' ']);
             }
-            document.write('<br>');
+            postMessage(['msg', '\n']);
         }
     }
 }
@@ -340,7 +339,6 @@ function Neuron(v, m) {
     * w - вектор весов
     */
     this.Perceptron = function(y1, derive) {
-        //alert(JSON.stringify([x1, w1, b]));
         //if (derive) y1;
         if (y1 > 0) {return 1;} else {return 0;} // активационная ф-ция
     }

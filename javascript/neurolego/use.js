@@ -39,7 +39,7 @@ function Use() {
                 this.m.T(sY_real);
 
                 if (il === opts.W.length-1) {
-                    if(opts.show_log) this.v.write(sY_real, function(msg) {postMessage(['msg', msg]);});
+                    if(opts.show_log) this.v.write(sY_real);
                     if(opts.show_log) postMessage(['msg', '\n']);
                 }
 

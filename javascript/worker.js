@@ -36,7 +36,7 @@ onmessage = function(e) {
     } else if (type === 'use') {
 
         if (opts.source_input === 'form') {
-            opts.sets_study = new Sets_Array(opts.Xs);
+            opts.sets_using = new Sets_Array(opts.Xs);
         } else if (opts.source_input === 'files') {
             let source_dir = opts.source_dir;
             opts.sets_using = new DataSeter(source_dir, type);
