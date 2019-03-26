@@ -100,8 +100,8 @@ function Vector(func_write_log) {
         for (let i=v.length; i < n; i++) {
             if (content === 'ones') _content = 1;
             else if (content === 'zeros') _content = 0;
-            //else if (content === 'random') _content = Math.round(Math.random() * 10);
-            else if (content === 'random') _content = Math.random();
+            else if (content === 'random0') _content = Math.round(Math.random() * 10);
+            else if (content === 'random1') _content = Math.random();
             v.push(_content);
         }
         self.SumConst(v, -0.5);

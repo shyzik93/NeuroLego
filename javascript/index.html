@@ -69,11 +69,11 @@ form .examples > .y {
     width: 38%;
 }
 
-form .examples textarea[name="Xs"] {
+.examples textarea[name="Xs"], .examples textarea[name="Xs_use"] {
     width: 98%;
     height: 125px;
 }
-form .examples textarea[name="sYs_ideal"] {
+.examples textarea[name="sYs_ideal"], .examples textarea[name="sYs_use"]{
     width: 98%;
     height: 125px;
 }
@@ -197,7 +197,7 @@ a.m.write(m1);
 
 <fieldset>
    Нейрон: <select name="neuron">
-        <option value='perceptron' checked>Перцептрон</option>
+        <option value='perceptron' selected>Перцептрон</option>
         <option value='linear'>Линейный</option>
         <option value='sigma'>Сигмоидный</option>
         <option value='tanh'>Гиперболический тангенс</option>
@@ -220,8 +220,17 @@ a.m.write(m1);
                 Входные данные для обучения (x):<br>
                 <textarea name="Xs" onchange="calcCountInput(this)">[[0, 0], [0, 1], [1, 0], [1,1]]</textarea>
             </div><div class="y">
-                Результат (y):<br>
+                Ответ (y):<br>
                 <textarea name="sYs_ideal">[[0], [1], [1], [0]]</textarea>
+            </div>
+        </div>
+       <div class="examples">
+            <div class="x">
+                Входные данные для теста (x):<br>
+                <textarea name="Xs_use" onchange="calcCountInput(this)">[[0, 0], [0, 1], [1, 0], [1,1]]</textarea>
+            </div><div class="y">
+                Ответ (y):<br>
+                <textarea name="sYs_use">[[0], [1], [1], [0]]</textarea>
             </div>
         </div>
     </div>
@@ -248,6 +257,11 @@ a.m.write(m1);
         <option value='gradient'>Градиентный спуск (не работает пока)</option>
     </select>
    <br>
+    Начальный формат весов: <select name="format_w">
+        <option value='0' selected>0 — 11</option>
+        <option value='1'>0.01 — 1.0</option>
+    </select>
+   <br>
     <!--Значение смещения (b): <input type="input" name="b" value="1" size="3"><br>-->
     Число нейронов в слоях: <input type="input" name="topology" value="[2,1]">
     <br>
@@ -265,10 +279,10 @@ a.m.write(m1);
 </fieldset>
 
     <input type="button" onclick="RunNN(this, 'study')" value="Обучить заново">
-    <input type="button" onclick="RunNN(this, 'use')" value="Использовать">
+    <input type="button" onclick="RunNN(this, 'use')" value="Тестировать">
     <br><br>
     <select onchange="actionsStudy(this);">
-        <option value='actions'>Дополнительно</option>
+        <option value='actions' selected>Дополнительно</option>
         <option value='export'>Экспорт в буфер</option>
         <option value='import'>Импорт из буфера</option>
     </select>

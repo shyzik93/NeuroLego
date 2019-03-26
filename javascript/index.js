@@ -51,6 +51,8 @@ function setOptsToForm(form, opts) {
         form.W.value = JSON.stringify(opts.W);
         form.Xs.value = JSON.stringify(opts.Xs);
         form.sYs_ideal.value = JSON.stringify(opts.sYs_ideal);
+        form.Xs_use.value = JSON.stringify(opts.Xs);
+        form.sYs_use.value = JSON.stringify(opts.sYs_ideal);
         form.source_input.value = opts.source_input;
         form.source_dir.value = opts.source_dir,
 
@@ -68,6 +70,7 @@ function setOptsToForm(form, opts) {
 
         form.show_log.checked = opts.show_log;
         form.neuron.value = opts.neuron;
+        form.format_w.value = opts.format_w;
         //form.b.value = opts.b;
 }
 
@@ -84,10 +87,17 @@ function collectOptsFromForm(form) {
     try { sYs_ideal = JSON.parse(form.sYs_ideal.value); }
     catch { alert("Синтаксическая ошибка в примерах (sYs_ideal)!"); }
 
+    try { Xs_use = JSON.parse(form.Xs_use.value); }
+    catch { alert("Синтаксическая ошибка в примерах (Xs)!"); }
+
+    try { sYs_use = JSON.parse(form.sYs_use.value); }
+    catch { alert("Синтаксическая ошибка в примерах (sYs_ideal)!"); }
+
     return {
         W: W,
 
         sYs_ideal: sYs_ideal,
+        sYs_use: sYs_use,
 
         speed_study: form.speed_study.value,
         restart_study: form.restart_study.checked,
@@ -99,12 +109,14 @@ function collectOptsFromForm(form) {
         method_study: form.method_study.value,
 
         Xs: Xs,
+        Xs_use: Xs_use,
         source_input: form.source_input.value,
         source_dir: form.source_dir.value,
         source_dir_is_length: form.source_dir_is_length.checked,
         source_dir_length: form.source_dir_length.value,
         show_log: form.show_log.checked,
-        neuron: form.neuron.value
+        neuron: form.neuron.value,
+        format_w: form.format_w.value
         //b: form.b.value
     };
 }

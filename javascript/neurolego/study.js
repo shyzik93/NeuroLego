@@ -179,13 +179,13 @@ function Study() {
     self.study_bp = new StudyBackPropagation();
 
     /* генерирует веса по описанию топологии */
-    this.generateWByTopology = function(W, topology, count_input) {
+    this.generateWByTopology = function(W, topology, count_input, format_w) {
 
         for (let il=0; il<topology.length;il++) {
             // количество входов нейрона равно количеству нейронов в предыдущем слое
             let _count_input = il === 0 ? count_input : topology[il-1];
 
-            W[il] = self.m.create(_count_input/*+1*/, topology[il], 'random');
+            W[il] = self.m.create(_count_input/*+1*/, topology[il], 'random'+format_w);
         }
 
     }
@@ -269,7 +269,7 @@ function Study() {
 
         // генерируем веса
         opts.W = [];
-        this.generateWByTopology(opts.W, opts.topology, opts.count_input);
+        this.generateWByTopology(opts.W, opts.topology, opts.count_input, opts.format_w);
 
         opts.free.count_error = -1;
         opts.free.restart_study_count = opts.restart_study_count;
@@ -353,7 +353,7 @@ function Study() {
            if (opts.restart_study & era == opts.count_era+1 & opts.free.restart_study_count > 0) {
                 era = 1;
                 opts.free.restart_study_count -= 1;
-                this.generateWByTopology(opts.W, opts.topology, opts.count_input);
+                this.generateWByTopology(opts.W, opts.topology, opts.count_input, opts.format_w);
                 ers = 0;
            }
 

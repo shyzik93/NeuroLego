@@ -11,7 +11,7 @@ onmessage = function(e) {
 
     if (opts.source_input === 'form') {
 
-        opts.sets_using = new Sets_Array(opts.Xs, opts.sYs_ideal);
+        opts.sets_using = new Sets_Array(opts.Xs_use, opts.sYs_use);
 
         opts.sets_study = new Sets_Array(opts.Xs, opts.sYs_ideal);
 
