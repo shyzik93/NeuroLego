@@ -219,9 +219,9 @@ function Study() {
 
         let delta = sY_ideal.slice();
         // разница между идеальным ответов и реальным
-        self.v.Diff(delta, Y_real[Y_real.length-1]);
+        this.m.Diff(delta, Y_real[Y_real.length-1]);
         // суммируем разницы всех выходов
-        delta = self.v.MultiplyScalConst(delta, 1);
+        delta = this.v.MultiplyScalConst(delta, 1, this.m.offset);
 
         delta = delta * opts.speed_study;
 
@@ -232,51 +232,34 @@ function Study() {
             let _nW=X;
             if (il !== 0) {
                 _nW = Y_real[il-1].slice();
-                _nW.push(opts.b);
+                //_nW.push(opts.b);
              }
 
-            self.v.MultiplyVectConst(_nW, delta);
+            self.m.MultiplyConst(_nW, delta);
 
-             for (let j=0;j<opts.W[il].length;j++) {
-                  self.v.Sum(opts.W[il][j], _nW);
-             }
+            this.m.SumVect(opts.W[il], _nW);
         }
     }
 
     /* Правила Хебба. Идеально для одного бинарного нейрона (1 и 0). Для двух слоёв срабатывает не всегда.*/
     this.studySimple = function(opts, Y_real, sY_ideal, X) {
-        //alert(JSON.stringify([]));
-        if (this.v.IsEq(Y_real[Y_real.length-1], sY_ideal)) {
-        } else {
-            opts.free.count_error += 1;
-            for (let il=0;il<opts.W.length;il++) {
+        if (this.v.IsEq(Y_real[Y_real.length-1], sY_ideal)) return;
 
-                let _nW=X;
-                if (il===0) _nW = X;
-                else {_nW = Y_real[il-1].slice();  /*_nW.push(opts.b);*/}
+        opts.free.count_error += 1;
+        for (let il=0;il<opts.W.length;il++) {
 
-                this.m.MultiplyConst(_nW, opts.speed_study);
-                //this.v.MultiplyVectConst(_nW, opts.speed_study);
+            let _nW=X;
+            if (il===0) _nW = X;
+            else {_nW = Y_real[il-1].slice();  /*_nW.push(opts.b);*/}
 
-                 for (let j=0;j<this.m.countRows(opts.W[il]);j++) {
-                      //let end = this.m.countCols(opts.W[il])*(j+1)+this.m.offset;
-                      let start = this.m.countCols(opts.W[il])*j;
-                      let end = start + this.m.countCols(opts.W[il]);
+            this.m.MultiplyConst(_nW, opts.speed_study);
 
-                      if (Y_real[Y_real.length-1][0] === 0) {
-                          for (let i=start; i < end; i++) opts.W[il][i] += _nW[i-start];
-                      } else {
-                        for (let i=start; i < end; i++) opts.W[il][i] -= _nW[i-start];
-                      }
-
-                      /*if (Y_real[Y_real.length-1][0] === 0) {
-                          this.v.Sum(opts.W[il], _nW, , this.m.countCols(j));
-                      } else {
-                          this.v.Diff(opts.W[il], _nW, this.m.countCols(opts.W[il])*(this.m.countRows(opts.W[il])-j-1)+this.m.offset, this.m.countCols(j));*=
-                     }*/
-                 }
-
+            if (Y_real[Y_real.length-1][0] === 0) {
+                 this.m.SumVect(opts.W[il], _nW);
+             } else {
+                 this.m.DiffVect(opts.W[il], _nW);
             }
+
         }
     }
 

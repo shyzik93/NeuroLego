@@ -55,9 +55,10 @@ function Vector(func_write_log) {
     }
 
     /* скалярное произведение вектора на число ( v1 * c )*/
-    this.MultiplyScalConst = function(v1, c) {
+    this.MultiplyScalConst = function(v1, c, offset) {
+        if (offset === undefined) offset = 0;
         let sum = 0;
-        for (let i=0; i < v1.length; i++) sum += v1[i] * c;
+        for (let i=0; i < v1.length-offset; i++) sum += v1[i] * c;
         return sum;
     }
 
@@ -213,6 +214,24 @@ function Matrix(v) {
     /* умножение матрицы на функцию ( m1 * f )*/
     this.MultiplyFunc = function(m1, f) {
         this.v.MultiplyVectFunc(m1, f, this.offset);
+    }
+
+   /* сложение матрицы с вектором построчно (m1 + v) */
+    this.SumVect = function(m1, v) {
+        for (let j=0; j<this.countRows(m1); j++) {
+              let start = this.countCols(m1) * j;
+              let end = start + this.countCols(m1);
+              for (let i=start; i < end; i++) m1[i] += v[i-start];
+        }
+    }
+
+   /* вычитание из матрицы вектора построчно (m1 - v) */
+    this.DiffVect = function(m1, v) {
+        for (let j=0; j<this.countRows(m1); j++) {
+              let start = this.countCols(m1) * j;
+              let end = start + this.countCols(m1);
+              for (let i=start; i < end; i++) m1[i] -= v[i-start];
+        }
     }
 
     /* переумножение элементов матриц ( m1 * m2 ) */
