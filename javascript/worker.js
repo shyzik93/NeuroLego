@@ -9,15 +9,24 @@ onmessage = function(e) {
     let opts = e.data[0];
     let type = e.data[1];
 
-    if (type === 'study') {
+    if (opts.source_input === 'form') {
 
-        if (opts.source_input === 'form') {
-            opts.sets_study = new Sets_Array(opts.Xs, opts.sYs_ideal);
-        } else if (opts.source_input === 'files') {
-            let source_dir = opts.source_dir;
-            opts.sets_study = new DataSeter(source_dir, type);
-            if (opts.source_dir_is_length) opts.sets_study.length = opts.source_dir_length;
-        }
+        opts.sets_using = new Sets_Array(opts.Xs, opts.sYs_ideal);
+
+        opts.sets_study = new Sets_Array(opts.Xs, opts.sYs_ideal);
+
+    } else if (opts.source_input === 'files') {
+        let source_dir = opts.source_dir;
+
+        opts.sets_using = new DataSeter(source_dir, type);
+        if (opts.source_dir_is_length) opts.sets_using.length = opts.source_dir_length;
+
+        opts.sets_study = new DataSeter(source_dir, type);
+        if (opts.source_dir_is_length) opts.sets_study.length = opts.source_dir_length;
+
+    }
+
+    if (type === 'study') {
 
         let s = new Study();
 
@@ -34,14 +43,6 @@ onmessage = function(e) {
         }]);
 
     } else if (type === 'use') {
-
-        if (opts.source_input === 'form') {
-            opts.sets_using = new Sets_Array(opts.Xs);
-        } else if (opts.source_input === 'files') {
-            let source_dir = opts.source_dir;
-            opts.sets_using = new DataSeter(source_dir, type);
-            if (opts.source_dir_is_length) opts.sets_using.length = opts.source_dir_length;
-        }
 
         let u = new Use();
 

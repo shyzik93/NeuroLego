@@ -246,7 +246,7 @@ function Study() {
     /* Правила Хебба. Идеально для одного бинарного нейрона (1 и 0). Для двух слоёв срабатывает не всегда.*/
     this.studySimple = function(opts, Y_real, sY_ideal, X) {
         //alert(JSON.stringify([]));
-        if (self.v.IsEq(Y_real[Y_real.length-1], sY_ideal)) {
+        if (this.v.IsEq(Y_real[Y_real.length-1], sY_ideal)) {
         } else {
             opts.free.count_error += 1;
             for (let il=0;il<opts.W.length;il++) {
@@ -255,21 +255,25 @@ function Study() {
                 if (il===0) _nW = X;
                 else {_nW = Y_real[il-1].slice();  /*_nW.push(opts.b);*/}
 
-                self.m.MultiplyConst(_nW, opts.speed_study);
-                //self.v.MultiplyVectConst(_nW, opts.speed_study);
+                this.m.MultiplyConst(_nW, opts.speed_study);
+                //this.v.MultiplyVectConst(_nW, opts.speed_study);
 
-                if (Y_real[Y_real.length-1][0] === 0) {
-                    self.m.Sum(opts.W[il], _nW);
-                } else {
-                    self.m.Diff(opts.W[il], _nW);
-                }
+                 for (let j=0;j<this.m.countRows(opts.W[il]);j++) {
+                      //let end = this.m.countCols(opts.W[il])*(j+1)+this.m.offset;
+                      let start = this.m.countCols(opts.W[il])*j;
+                      let end = start + this.m.countCols(opts.W[il]);
 
-                 for (let j=0;j<opts.W[il].length;j++) {
                       if (Y_real[Y_real.length-1][0] === 0) {
-                          self.v.Sum(opts.W[il][j], _nW);
+                          for (let i=start; i < end; i++) opts.W[il][i] += _nW[i-start];
                       } else {
-                          self.v.Diff(opts.W[il][j], _nW);
-                     }
+                        for (let i=start; i < end; i++) opts.W[il][i] -= _nW[i-start];
+                      }
+
+                      /*if (Y_real[Y_real.length-1][0] === 0) {
+                          this.v.Sum(opts.W[il], _nW, , this.m.countCols(j));
+                      } else {
+                          this.v.Diff(opts.W[il], _nW, this.m.countCols(opts.W[il])*(this.m.countRows(opts.W[il])-j-1)+this.m.offset, this.m.countCols(j));*=
+                     }*/
                  }
 
             }
