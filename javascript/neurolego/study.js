@@ -26,12 +26,14 @@ function StudyBackPropagation() {
 
     this.step = function(opts, Y_real, sY_ideal, X) {
 
-       let delta;
+       let delta, error_example;
 
         // расчёт ошибок
 
         let output_errors = sY_ideal.slice();
         self.m.Diff(output_errors, Y_real[1]);
+
+       error_example = 0;
 
        self.m.T(opts.W[1]);
        let hidden_errors = self.m.Multiply(opts.W[1], output_errors);
@@ -78,6 +80,8 @@ function StudyBackPropagation() {
 
         self.m.T(delta);
         self.m.Sum(opts.W[0], delta);
+
+        return error_example;
 
     }
 
@@ -217,11 +221,15 @@ function Study() {
     /* Дельта-правило. Для одного нейрона с выходом и входом от 0.0 до 1.0 */
     this.studyDelta = function(opts, Y_real, sY_ideal, X) {
 
+       let error_example;
+
         let delta = sY_ideal.slice();
         // разница между идеальным ответов и реальным
         this.m.Diff(delta, Y_real[Y_real.length-1]);
         // суммируем разницы всех выходов
         delta = this.v.MultiplyScalConst(delta, 1, this.m.offset);
+
+        error_example = delta;
 
         delta = delta * opts.speed_study;
 
@@ -239,13 +247,16 @@ function Study() {
 
             this.m.SumVect(opts.W[il], _nW);
         }
+
+        return error_example;
     }
 
     /* Правила Хебба. Идеально для одного бинарного нейрона (1 и 0). Для двух слоёв срабатывает не всегда.*/
     this.studySimple = function(opts, Y_real, sY_ideal, X) {
-        if (this.v.IsEq(Y_real[Y_real.length-1], sY_ideal)) return;
+        let error_example;
+        if (this.v.IsEq(Y_real[Y_real.length-1], sY_ideal)) return 0;
 
-        opts.free.count_error += 1;
+        //opts.free.count_error += 1;
         for (let il=0;il<opts.W.length;il++) {
 
             let _nW=X;
@@ -261,6 +272,8 @@ function Study() {
             }
 
         }
+
+        return error_example;
     }
 
     this.study = function(opts) {
@@ -322,20 +335,24 @@ function Study() {
 
                 }
 
-//alert(JSON.stringify(Y_real))
+               let error_example;
 
                if (opts.method_study === 'gradient' ) {
-                    this.study_bp.step(opts, Y_real, sY_ideal, X);
+                    error_example = this.study_bp.step(opts, Y_real, sY_ideal, X);
                     //let sW_delta = self.study_bp.step2(opts, Y_real, sY_ideal, X);
                     //if(era%1===0) opts.func_write_log(i+':: '+JSON.stringify(Y_real[1])+'\n');
                     //self.study_bp.step4(opts, sW_delta);
                     //opts.free.count_error += 1;
                 } else if (opts.method_study === 'delta' ) {
-                    this.studyDelta(opts, Y_real, sY_ideal, X);
+                    error_example = this.studyDelta(opts, Y_real, sY_ideal, X);
                 } else if (opts.method_study === 'simple') {
-                    this.studySimple(opts, Y_real, sY_ideal, X);
+                    error_example = this.studySimple(opts, Y_real, sY_ideal, X);
                 }
 
+
+                if (error_example !== 0) {
+                    opts.free.count_error += 1;
+                }
                //ers += this.study_bp.calcDelta(opts, Y_real, sY_ideal);
 
             }

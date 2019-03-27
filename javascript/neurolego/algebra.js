@@ -8,9 +8,6 @@ function Vector(func_write_log) {
 
     let self = this;
 
-    /*if(func_write_log === undefined) {this.func_write_log = document.write;}
-    else {this.func_write_log = func_write_log;}*/
-
     this.check_size = function(v1, v2) {
         if (v1.length !== v2.length) {
             postMessage(['alert', 'Векторы '+JSON.stringify(v1)+'  и '+JSON.stringify(v2)+' имеют разную размерность! ('+v1.length+' и '+v2.length+')']);
@@ -28,22 +25,19 @@ function Vector(func_write_log) {
     }
 
     /* сложение векторов ( v1 + v2 ) */
-    this.Sum = function(v1, v2, offset) {
-        if (offset === undefined) offset = 0;
+    this.Sum = function(v1, v2, offset=0) {
         self.check_size(v1, v2);
         for (let i=0; i < v1.length-offset; i++) v1[i] = v1[i] + v2[i];
     }
 
     /* вычитание векторов ( v1 - v2 ) */
-    this.Diff = function(v1, v2, offset) {
-        if (offset === undefined) offset = 0;
+    this.Diff = function(v1, v2, offset=0) {
         self.check_size(v1, v2);
         for (let i=0; i < v1.length-offset; i++) v1[i] = v1[i] - v2[i];
     }
 
     /* сложение вектора с числом ( v1 + c ) */
-    this.SumConst = function(v1, c, offset) {
-        if (offset === undefined) offset = 0;
+    this.SumConst = function(v1, c, offset=0) {
         for (let i=0; i < v1.length-offset; i++) v1[i] = v1[i] + c;
     }
 
@@ -55,8 +49,7 @@ function Vector(func_write_log) {
     }
 
     /* скалярное произведение вектора на число ( v1 * c )*/
-    this.MultiplyScalConst = function(v1, c, offset) {
-        if (offset === undefined) offset = 0;
+    this.MultiplyScalConst = function(v1, c, offset=9) {
         let sum = 0;
         for (let i=0; i < v1.length-offset; i++) sum += v1[i] * c;
         return sum;
@@ -71,21 +64,18 @@ function Vector(func_write_log) {
     }
 
     /* векторное произведение векторов ( v2 x v2 )*/
-    this.MultiplyVect = function(v1, v2, offset) {
-        if (offset === undefined) offset = 0;
+    this.MultiplyVect = function(v1, v2, offset=0) {
         self.check_size(v1, v2);
         for (let i=0; i < v1.length-offset; i++) v1[i] = v1[i] * v2[i];
     }
 
     /* векторное умножение вектора на число ( v1 * c )*/
-    this.MultiplyVectConst = function(v1, c, offset) {
-        if (offset === undefined) offset = 0;
+    this.MultiplyVectConst = function(v1, c, offset=0) {
         for (let i=0; i < v1.length-offset; i++) v1[i] = v1[i] * c;
     }
 
     /* векторное умножение вектора на функцию ( v1 * f )*/
-    this.MultiplyVectFunc = function(v1, f, offset) {
-        if (offset === undefined) offset = 0;
+    this.MultiplyVectFunc = function(v1, f, offset=0) {
         for (let i=0; i < v1.length-offset; i++) v1[i] = f(v1[i]);
     }
 

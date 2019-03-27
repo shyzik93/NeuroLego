@@ -188,3 +188,18 @@ function setInputMetaData(input) {
         input.form.querySelector('.source_input_files_meta').innerHTML = 'Количество примеров: '+ds.length +'<br>Количество нейронов в последнем слое: '+ds.count_output;
         if(input.form.count_input) input.form.count_input.value = ds.count_input;
 }
+
+
+function loadExample(name) {
+    if (name === 'load') return;
+
+    let url = 'examples/' + name + '.json';
+    let req = new XMLHttpRequest();
+    req.open('GET', url, false);
+
+    req.send(null);
+
+    let form = document.getElementById('form_study');
+    setOptsToForm(form, JSON.parse(req.responseText));
+    form.load_example.value = 'load';
+}
