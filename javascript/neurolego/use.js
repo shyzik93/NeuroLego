@@ -20,7 +20,7 @@ function Use() {
             //if(opts.show_log) this.v.write(X, opts.func_write_log);
             //if(opts.show_log) opts.func_write_log('\n');
 
-            //X.push(opts.b);
+            this.add_b(X, opts);
 
             // перебираем слои
             for (let il=0;il<opts.W.length;il++) {
@@ -44,7 +44,7 @@ function Use() {
                 }
 
                 X = sY_real;
-                //X.push(opts.b);
+                this.add_b(X, opts);
             }
         }
     }

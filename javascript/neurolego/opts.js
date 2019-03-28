@@ -32,6 +32,7 @@ function Opts() {
         if (opts.func_write_log === undefined) opts.func_write_log = console.log;
         if (opts.neuron === undefined) opts.neuron = self.n.Perceptron;
         if (opts.b === undefined) opts.b = 1;
+        if (opts.add_b === undefined) opts.add_b = false;
 
         if (opts.source_dir_is_length === undefined) opts.source_dir_is_length = false;
         if (opts.source_dir_length === undefined) opts.source_dir_length = 0;
@@ -55,5 +56,15 @@ function Opts() {
         opts.restart_study_count = parseInt(opts.restart_study_count);
         opts.show_log_era_in_step = parseInt(opts.show_log_era_in_step);
 
+    }
+
+    this.add_b = function(m1_n, opts) {
+        if (opts.add_b) {
+            //postMessage(['alert', m1_n]);
+            m1_n.splice(-this.m.offset, 0, opts.b);
+            if (this.m.isT(m1_n)) this.m.setCountRows(m1_n, this.m.countRows(m1_n)+1);
+            else this.m.setCountCols(m1_n, this.m.countCols(m1_n)+1);
+            //postMessage(['alert', m1_n]);
+        }
     }
 }

@@ -71,6 +71,7 @@ function setOptsToForm(form, opts) {
         form.show_log.checked = opts.show_log;
         form.neuron.value = opts.neuron;
         form.format_w.value = opts.format_w;
+        form.add_b.checked = opts.add_b;
         //form.b.value = opts.b;
 }
 
@@ -116,7 +117,8 @@ function collectOptsFromForm(form) {
         source_dir_length: form.source_dir_length.value,
         show_log: form.show_log.checked,
         neuron: form.neuron.value,
-        format_w: form.format_w.value
+        format_w: form.format_w.value,
+        add_b: form.add_b.checked
         //b: form.b.value
     };
 }
