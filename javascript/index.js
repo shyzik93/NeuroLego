@@ -161,20 +161,26 @@ function calcCountInput(field) {
 
 }
 
-function actionsStudy(select) {
-    if (select.value === 'export') {
+function actionsStudy(select, action) {
+    if (action === 'export') {
         let opts = collectOptsFromForm(select.form);
-        select.form.sYs_ideal.value = JSON.stringify(opts);
-        //copyToClipboard(JSON.stringify(opts));
-    } else if (select.value === 'import') {
-        let opts = JSON.parse(select.form.sYs_ideal.value);
-        setOptsToForm(select.form, opts);
-    }
+        opts = JSON.stringify(opts);
 
-    if (select.value !== 'actions') {
-        select.value = 'actions';
-    }
+        let blob = unescape( encodeURIComponent(opts));
+        let a = document.getElementById('a_load');
+        a.href = "data:text/json;charset=utf-8;base64,"+btoa(blob);
+        a.download = 'exportExample.json';
+        a.click();
 
+    } else if (action === 'import') {
+        let reader = new FileReader();
+        reader.onload = function(event) {
+            let opts = event.target.result;
+            opts = atob(opts.replace(/^data.*,/, ''));
+            setOptsToForm(select.form, JSON.parse(opts));
+         };
+         reader.readAsDataURL(select.files[0]);
+    }
 }
 
 function selectSourceInput(form, name) {

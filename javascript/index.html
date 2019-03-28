@@ -284,13 +284,11 @@ a.m.write(m1);
     <input type="button" onclick="RunNN(this, 'study')" value="Обучить заново">
     <input type="button" onclick="RunNN(this, 'use')" value="Тестировать">
     <br><br>
-    <select onchange="actionsStudy(this);">
-        <option value='actions' selected>Дополнительно</option>
-        <option value='export'>Экспорт в буфер</option>
-        <option value='import'>Импорт из буфера</option>
-    </select>
+   <input type='button' value='Экспорт в файл' onclick="actionsStudy(this, 'export');">
+   <input type='file' value='Импорт из файла' onchange="actionsStudy(this, 'import');">
+    <br>
     <select onchange="loadExample(this.value);" name='load_example'>
-        <option value='load' selected>Импорт примера</option>
+        <option value='load' selected>Импорт встроенного примера</option>
         <option value='0'>1 Перцептрон: OR</option>
         <option value='1'>2 Перцептрона:  XOR</option>
         <option value='2'>Аппроксимация на сигмоидах</option>
@@ -314,6 +312,11 @@ selectSourceInput(document.getElementById('form_study'), 'form')
 <div>
 Книги: Тарик Рашид "Создаём нейронную сеть" — примеры программ, объясненип теории без формул. В приложении "А" — теория о диффернцировании уравнений.
 </div>
+
+<p style='display:none;'>
+    <a href='' id='a_load'></a>
+    <input type='file' id='i_load'>
+</p>
 
 </body>
 
