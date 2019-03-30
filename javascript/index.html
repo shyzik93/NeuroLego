@@ -243,21 +243,28 @@ a.m.write(m1);
          <input type="text" name="source_dir" onchange="setInputMetaData(this)">
          <div class="source_input_files_meta"></div>
          <input type="checkbox" name="source_dir_is_length">
-         Ограничить кол-во примеров:
+         Ограничить кол-во учебных примеров:
          <input type="text" name="source_dir_length" size="5" value="0">
+         <br>
+         <input type="checkbox" name="source_dir_is_length_using">
+         Ограничить кол-во тестовых примеров:
+         <input type="text" name="source_dir_length_using" size="5" value="0">
     </div>
 </fieldset>
 
 <fieldset>
     <input type="checkbox" name="show_log" checked>
-    Выводить лог
+    Выводить лог при обучении
+    <br>
+    <input type="checkbox" name="show_log_using" checked>
+    Выводить лог при тесте
 </fieldset>
 
 <fieldset><legend>Опции обучения</legend>
 Метод обучения: <select name="method_study">
         <option value='simple' checked>Простое (для 1 и 0)</option>
         <option value='delta'>Дельта (натур. числа)</option>
-        <option value='gradient'>Градиентный спуск (не работает пока)</option>
+        <option value='gradient'>Градиентный спуск</option>
     </select>
    <br>
     Начальный формат весов: <select name="format_w">
@@ -284,8 +291,13 @@ a.m.write(m1);
     <input type="button" onclick="RunNN(this, 'study')" value="Обучить заново">
     <input type="button" onclick="RunNN(this, 'use')" value="Тестировать">
     <br><br>
-   <input type='button' value='Экспорт в файл' onclick="actionsStudy(this, 'export');">
-   <input type='file' value='Импорт из файла' onchange="actionsStudy(this, 'import');">
+
+    <input type='button' value='Экспорт в файл' onclick="actionsStudy(this, 'export');">
+    <span style='position:relative;'>
+        <input type='button' value='Импорт из файла'>
+        <input type='file' onchange="actionsStudy(this, 'import');" style='position:absolute;top:0;left:0;opacity:0;'>
+    </span>
+
     <br>
     <select onchange="loadExample(this.value);" name='load_example'>
         <option value='load' selected>Импорт встроенного примера</option>

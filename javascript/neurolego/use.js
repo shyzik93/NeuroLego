@@ -16,16 +16,16 @@ function Use() {
             let X = this.m.createFromVect(opts.sets_using.get_x_example(ix), true);
             this.m.T(X);
 
-            //if(opts.show_log) opts.func_write_log('Вход (x): ');
-            //if(opts.show_log) this.v.write(X, opts.func_write_log);
-            //if(opts.show_log) opts.func_write_log('\n');
+            //if(opts.show_log_using) opts.func_write_log('Вход (x): ');
+            //if(opts.show_log_using) this.v.write(X, opts.func_write_log);
+            //if(opts.show_log_using) opts.func_write_log('\n');
 
             this.add_b(X, opts);
 
             // перебираем слои
             for (let il=0;il<opts.W.length;il++) {
 
-                if(opts.show_log) {
+                if(opts.show_log_using) {
                     if (il === opts.W.length-1) {
     postMessage(['msg', 'Верный ответ: '+JSON.stringify(opts.sets_using.get_y_example(ix))+'\n']);
                         postMessage(['msg', '  Выход (y): ']);
@@ -39,8 +39,8 @@ function Use() {
                 this.m.T(sY_real);
 
                 if (il === opts.W.length-1) {
-                    if(opts.show_log) this.m.write(sY_real);
-                    if(opts.show_log) postMessage(['msg', '\n']);
+                    if(opts.show_log_using) this.m.write(sY_real);
+                    if(opts.show_log_using) postMessage(['msg', '\n']);
                 }
 
                 X = sY_real;

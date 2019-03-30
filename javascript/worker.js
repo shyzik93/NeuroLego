@@ -19,7 +19,7 @@ onmessage = function(e) {
         let source_dir = opts.source_dir;
 
         opts.sets_using = new DataSeter(source_dir, type);
-        if (opts.source_dir_is_length) opts.sets_using.length = opts.source_dir_length;
+        if (opts.source_dir_is_length_using) opts.sets_using.length = opts.source_dir_length_using;
 
         opts.sets_study = new DataSeter(source_dir, type);
         if (opts.source_dir_is_length) opts.sets_study.length = opts.source_dir_length;

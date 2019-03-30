@@ -58,6 +58,8 @@ function setOptsToForm(form, opts) {
 
         form.source_dir_is_length.checked = opts.source_dir_is_length,
         form.source_dir_length.value = opts.source_dir_length,
+        form.source_dir_is_length_using.checked = opts.source_dir_is_length_using,
+        form.source_dir_length_using.value = opts.source_dir_length_using,
 
         form.speed_study.value = opts.speed_study;
         form.restart_study.checked = opts.restart_study;
@@ -69,6 +71,7 @@ function setOptsToForm(form, opts) {
         form.method_study.value = opts.method_study;
 
         form.show_log.checked = opts.show_log;
+        form.show_log_using.checked = opts.show_log_using;
         form.neuron.value = opts.neuron;
         form.format_w.value = opts.format_w;
         form.add_b.checked = opts.add_b;
@@ -115,7 +118,10 @@ function collectOptsFromForm(form) {
         source_dir: form.source_dir.value,
         source_dir_is_length: form.source_dir_is_length.checked,
         source_dir_length: form.source_dir_length.value,
+        source_dir_is_length_using: form.source_dir_is_length_using.checked,
+        source_dir_length_using: form.source_dir_length_using.value,
         show_log: form.show_log.checked,
+        show_log_using: form.show_log_using.checked,
         neuron: form.neuron.value,
         format_w: form.format_w.value,
         add_b: form.add_b.checked
@@ -192,9 +198,12 @@ function selectSourceInput(form, name) {
 }
 
 function setInputMetaData(input) {
-        let ds = new DataSeter(input.value, input.form.count_input ? 'study' : 'use');
-        input.form.querySelector('.source_input_files_meta').innerHTML = 'Количество примеров: '+ds.length +'<br>Количество нейронов в последнем слое: '+ds.count_output;
-        if(input.form.count_input) input.form.count_input.value = ds.count_input;
+        let ds = new DataSeter(input.value,  'study');
+        let ds2 = new DataSeter(input.value, 'use');
+        let meta_el = input.form.querySelector('.source_input_files_meta')
+
+        meta_el.innerHTML = 'Количество учебных примеров: '+ds.length + '<br>Количество тестовых примеров: '+ds2.length + '<br>Количество нейронов в выходном слое: '+ds.count_output;
+        input.form.count_input.value = ds.count_input;
 }
 
 
