@@ -253,15 +253,14 @@ function Study() {
 
     /* Правила Хебба. Идеально для одного бинарного нейрона (1 и 0). Для двух слоёв срабатывает не всегда.*/
     this.studySimple = function(opts, Y_real, sY_ideal, X) {
-        let error_example;
         if (this.v.IsEq(Y_real[Y_real.length-1], sY_ideal)) return 0;
+
+        let _nW=X;
 
         //opts.free.count_error += 1;
         for (let il=0;il<opts.W.length;il++) {
 
-            let _nW=X;
-            if (il===0) _nW = X;
-            else {_nW = Y_real[il-1].slice(); this.add_b(_nW, opts);}
+            if (il !==0 ) {_nW = Y_real[il-1].slice(); this.add_b(_nW, opts);}
 
             this.m.MultiplyConst(_nW, opts.speed_study);
 
@@ -273,29 +272,61 @@ function Study() {
 
         }
 
-        return error_example;
+        return 1;
+    }
+
+    this.log2 = function(opts, Y_real, sY_ideal, il, era) {
+        if(!(opts.show_log & il===opts.W.length-1 & era%opts.show_log_era_in_step===0)) return;
+        //opts.func_write_log('X: ');
+        //self.v.write(X, opts.func_write_log);
+        postMessage(['msg',' | '+JSON.stringify(sY_ideal)+'\n']);
+        for(let j=0;j<opts.W[il].length;j++) {
+            //opts.func_write_log('nW: ');
+            //self.v.write(opts.W[il][j], opts.func_write_log);
+            postMessage(['msg',' | '+Y_real[il][j]+'\n']);
+        }
+        postMessage(['msg', '\n']);
+    }
+
+    this.study_method_selector = function(opts, Y_real, sY_ideal, X) {
+        let error_example; // уровень ошибуи на примере
+
+        if (opts.method_study === 'gradient' ) {
+            error_example = this.study_bp.step(opts, Y_real, sY_ideal, X);
+            //let sW_delta = self.study_bp.step2(opts, Y_real, sY_ideal, X);
+            //if(era%1===0) opts.func_write_log(i+':: '+JSON.stringify(Y_real[1])+'\n');
+            //self.study_bp.step4(opts, sW_delta);
+            //opts.free.count_error += 1;
+        } else if (opts.method_study === 'delta' ) {
+            error_example = this.studyDelta(opts, Y_real, sY_ideal, X);
+        } else if (opts.method_study === 'simple') {
+            error_example = this.studySimple(opts, Y_real, sY_ideal, X);
+        }
+
+        if (error_example !== 0) {
+            opts.free.count_error += 1; // количество ошибок на эпохе
+            opts.free.error_era += error_example;
+        }
     }
 
     this.study = function(opts) {
 
-        this.validate_opts(opts, 'study');
+        this.validate_opts(opts);
 
         // генерируем веса
         opts.W = [];
         this.generateWByTopology(opts.W, opts.topology, opts.count_input, opts.format_w, opts.add_b);
 
-        opts.free.count_error = -1;
         opts.free.restart_study_count = opts.restart_study_count;
         let era = 1;
 
-        while (opts.free.count_error !== 0) {
+        while (1) {
 
             if (era == opts.count_era+1) { /*alert('Обучение прервано!');*/ break; }
             if (opts.show_log & era%opts.show_log_era_in_step===0) postMessage(['msg', '-------------- Era '+era+'\n\n']);
 
-            opts.free.count_error = 0;
-            let error_era=0; // суммарная величина ошибки на всех примерах
-            let Y_real = [], ers = 0;
+            opts.free.count_error = 0; // число ошибок за эпоху
+            opts.free.error_era = 0; // суммарный уровень ошибок за эпоху
 
             // перебираем примеры
             for (let i=0; i < opts.sets_study.length; i++) {
@@ -308,70 +339,44 @@ function Study() {
                 let sY_ideal = this.m.createFromVect(opts.sets_study.get_y_example(i), true);
                 self.m.T(sY_ideal);
 
-                let _X; // либо пример, либо выход слоя
+                let _X = X; // либо пример, либо выход слоя
                 this.add_b(X, opts);
+
+                let Y_real = [];
 
                 // перебираем слои
                 for (let il=0;il<opts.W.length;il++) {
 
-                     if (il === 0) _X = X;
-                     else {_X = Y_real[il-1]; this.add_b(_X, opts);}
+                     // в ответ выходного слоя смещение не добавится
+                     if (il !== 0) { _X = Y_real[il-1]; this.add_b(_X, opts);}
 
                      Y_real[il] = this.m.Multiply(opts.W[il].slice(), _X);
                      this.m.MultiplyFunc(Y_real[il], opts.neuron);
                      this.m.T(Y_real[il]);
 
-                   if(opts.show_log & il===opts.W.length-1 & era%opts.show_log_era_in_step===0){
-                        //opts.func_write_log('X: ');
-                        //self.v.write(X, opts.func_write_log);
-                        postMessage(['msg',' | '+JSON.stringify(sY_ideal)+'\n']);
-                        for(let j=0;j<opts.W[il].length;j++) {
-                            //opts.func_write_log('nW: ');
-                            //self.v.write(opts.W[il][j], opts.func_write_log);
-                            postMessage(['msg',' | '+Y_real[il][j]+'\n']);
-                       }
-                       postMessage(['msg', '\n']);
-                    }
+                     this.log2(opts, Y_real, sY_ideal, il, era);
 
                 }
 
-               let error_example;
-
-               if (opts.method_study === 'gradient' ) {
-                    error_example = this.study_bp.step(opts, Y_real, sY_ideal, X);
-                    //let sW_delta = self.study_bp.step2(opts, Y_real, sY_ideal, X);
-                    //if(era%1===0) opts.func_write_log(i+':: '+JSON.stringify(Y_real[1])+'\n');
-                    //self.study_bp.step4(opts, sW_delta);
-                    //opts.free.count_error += 1;
-                } else if (opts.method_study === 'delta' ) {
-                    error_example = this.studyDelta(opts, Y_real, sY_ideal, X);
-                } else if (opts.method_study === 'simple') {
-                    error_example = this.studySimple(opts, Y_real, sY_ideal, X);
-                }
-
-
-                if (error_example !== 0) {
-                    opts.free.count_error += 1;
-                }
+               this.study_method_selector(opts, Y_real, sY_ideal, X);
                //ers += this.study_bp.calcDelta(opts, Y_real, sY_ideal);
 
             }
 
            //if (era%opts.show_log_era_in_step===0) opts.func_write_log('Error: '+ers+'\n');
 
-           //opts.func_write_log(Y_real[Y_real.length-1][0]+' ' +'  ' +error_era+'\n');
-           //if (error_era <= 0) {return 1;}
+           //opts.func_write_log(Y_real[Y_real.length-1][0]+' ' +'  ' +opts.free.count_error+'\n');
+           //if (opts.free.count_error <= 0) {return 1;}
 
            if (opts.free.count_error === 0) {return 1;}
 
            era += 1;
-           error_era = 0;
 
            if (opts.restart_study & era == opts.count_era+1 & opts.free.restart_study_count > 0) {
                 era = 1;
                 opts.free.restart_study_count -= 1;
                 this.generateWByTopology(opts.W, opts.topology, opts.count_input, opts.format_w, opts.add_b);
-                ers = 0;
+                opts.free.count_error = 0;
            }
 
         }

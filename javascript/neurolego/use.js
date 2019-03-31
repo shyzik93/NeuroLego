@@ -6,9 +6,25 @@
 function Use() {
     Opts.call(this);
 
+    this.log1 = function(opts, il, ix) {
+        if(!opts.show_log_using) return;
+        if (il === opts.W.length-1) {
+            postMessage(['msg', 'Верный ответ: '+JSON.stringify(opts.sets_using.get_y_example(ix))+'\n']);
+            postMessage(['msg', '  Выход (y): ']);
+        } // else { opts.func_write_log('  Слой '+(il+1)+': '); }
+    }
+
+   this.log2 = function(opts, Y_real, il) {
+        if(!opts.show_log_using) retutn;
+        if (il === opts.W.length-1) {
+            this.m.write(Y_real[il]);
+            postMessage(['msg', '\n']);
+        }
+    }
+
     this.use = function(opts) {
 
-        this.validate_opts(opts, 'use');
+        this.validate_opts(opts);
 
         // перебираем примеры
         for (let ix=0; ix < opts.sets_using.length; ix++) {
@@ -22,29 +38,22 @@ function Use() {
 
             this.add_b(X, opts);
 
+            let Y_real = [];
+
             // перебираем слои
             for (let il=0;il<opts.W.length;il++) {
 
-                if(opts.show_log_using) {
-                    if (il === opts.W.length-1) {
-    postMessage(['msg', 'Верный ответ: '+JSON.stringify(opts.sets_using.get_y_example(ix))+'\n']);
-                        postMessage(['msg', '  Выход (y): ']);
-                    } // else { opts.func_write_log('  Слой '+(il+1)+': '); }
-                 }
+                this.log1(opts, il, ix);
 
-                // перебираем нейроны в слое
+                // в ответ выходного слоя смещение не добавится
+                if (il !== 0) { X = Y_real[il-1]; this.add_b(X, opts);}
 
-                let sY_real = this.m.Multiply(opts.W[il], X);
-                this.m.MultiplyFunc(sY_real, opts.neuron);
-                this.m.T(sY_real);
+                Y_real[il] = this.m.Multiply(opts.W[il], X);
+                this.m.MultiplyFunc(Y_real[il], opts.neuron);
+                this.m.T(Y_real[il]);
 
-                if (il === opts.W.length-1) {
-                    if(opts.show_log_using) this.m.write(sY_real);
-                    if(opts.show_log_using) postMessage(['msg', '\n']);
-                }
+                this.log2(opts, Y_real, il);
 
-                X = sY_real;
-                this.add_b(X, opts);
             }
         }
     }
