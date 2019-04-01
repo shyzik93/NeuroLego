@@ -9,20 +9,46 @@ import json
 
 class neuralNetwork:
 
-    def __init__(self, inputnodes, hiddennodes, outputnodes, learningrate):
+    '''
+    this.generateWByTopology = function(W, topology, count_input, format_w, add_b) {
+
+        for (let il=0; il<topology.length;il++) {
+            // количество входов нейрона равно количеству нейронов в предыдущем слое
+            let _count_input = il === 0 ? count_input : topology[il-1];
+
+            W[il] = self.m.create(add_b ? _count_input+1 : _count_input, topology[il], 'random'+format_w);
+        }
+
+    }
+    '''
+
+    neurons = {
+        'sigma': scipy.special.expit
+    }
+
+    def generate_w_by_topology(self, W, topology, count_input, format_w, add_b):
+        for il in range(len(topology)):
+            _count_input = count_input if il == 0 else topology[il-1]
+            
+            if add_b: _count_input +=1
+            
+            if format_w == 'random0':
+                pass
+            elif format_w == 'random1':
+                W.append(numpy.random.normal(0.0, pow(topology[il], -0.5), (topology[il], _count_input)))
+
+    def __init__(self, opts):
         
-        self.inodes = inputnodes
-        self.hnodes = hiddennodes
-        self.onodes = outputnodes
+        self.opts = opts
         
-        self.lr = learningrate
+        self.generate_w_by_topology(opts['W'], opts['topology'], opts['count_input'], opts['format_w'], opts['add_b'])
         
         #self.wih = numpy.random.rand(self.hnodes, self.inodes) - 0.5
         #self.who = numpy.random.rand(self.onodes, self.hnodes) - 0.5
-        self.wih = numpy.random.normal(0.0, pow(self.hnodes, -0.5), (self.hnodes, self.inodes))
-        self.who = numpy.random.normal(0.0, pow(self.onodes, -0.5), (self.onodes, self.hnodes))
+        self.wih = opts['W'][0] #numpy.random.normal(0.0, pow(self.hnodes, -0.5), (self.hnodes, self.inodes))
+        self.who = opts['W'][1] #numpy.random.normal(0.0, pow(self.onodes, -0.5), (self.onodes, self.hnodes))
         
-        self.activation_function = lambda x: scipy.special.expit(x)
+        self.activation_function = self.neurons[self.opts['neuron']]
         
     def train(self, inputs_list, targets_list):
         
@@ -30,7 +56,8 @@ class neuralNetwork:
         targets = numpy.array(targets_list, ndmin=2).T
         
         # расчёт выхода
-        
+        #print(self.wih)
+        #print(inputs)
         hidden_inputs = numpy.dot(self.wih, inputs)
         hidden_outputs = self.activation_function(hidden_inputs)
         
@@ -46,9 +73,9 @@ class neuralNetwork:
         
         # Расчёт разницы коэффициентов
         
-        self.who += self.lr * numpy.dot((output_errors * final_outputs * (1.0 - final_outputs)), numpy.transpose(hidden_outputs))
+        self.who += self.opts['speed_study'] * numpy.dot((output_errors * final_outputs * (1.0 - final_outputs)), numpy.transpose(hidden_outputs))
         
-        self.wih += self.lr * numpy.dot((hidden_errors * hidden_outputs * (1.0 - hidden_outputs)), numpy.transpose(inputs))
+        self.wih += self.opts['speed_study'] * numpy.dot((hidden_errors * hidden_outputs * (1.0 - hidden_outputs)), numpy.transpose(inputs))
         
     def query(self, inputs_list):
         
@@ -62,12 +89,41 @@ class neuralNetwork:
         
         return final_outputs
         
-input_nodes = 784
-hidden_nodes = 100
-output_nodes = 10
-learning_rate = 0.3
 
-n = neuralNetwork(input_nodes, hidden_nodes, output_nodes, learning_rate)
+'''
+        sYs_ideal: sYs_ideal,
+        sYs_use: sYs_use,
+
+        restart_study: form.restart_study.checked,
+        restart_study_count: form.restart_study_count.value,
+        count_era: form.count_era.value,
+        show_log_era_in_step: form.show_log_era_in_step.value,
+        method_study: form.method_study.value,
+
+        Xs: Xs,
+        Xs_use: Xs_use,
+        source_input: form.source_input.value,
+        source_dir: form.source_dir.value,
+        source_dir_is_length: form.source_dir_is_length.checked,
+        source_dir_length: form.source_dir_length.value,
+        source_dir_is_length_using: form.source_dir_is_length_using.checked,
+        source_dir_length_using: form.source_dir_length_using.value,
+        show_log: form.show_log.checked,
+        show_log_using: form.show_log_using.checked,
+        //b: form.b.value
+'''
+
+opts = {
+    'speed_study': 0.3,
+    'count_input': 784,
+    'neuron': 'sigma',
+    'topology': [100, 10],
+    'W':[],
+    'add_b': False,
+    'format_w': 'random1',
+}
+
+n = neuralNetwork(opts)
 #final_outputs = n.query([5,7,9])
 
 fpath = '/storage/emulated/0/qpython/scripts3/'
@@ -77,13 +133,13 @@ with open(fpath+'mnist_train.csv', 'r', newline='') as cf:
         
         inputs = [float(i) / 255 * 0.99 + 0.01 for i in row[1:]]
 
-        targets = numpy.zeros(output_nodes) + 0.01
+        targets = numpy.zeros(opts['topology'][-1]) + 0.01
         targets[int(row[0])] = 0.99
 
         n.train(inputs, targets)
         
         #print(n.who)
-        if i % 6000 == 0: print(row[0], n.oe)
+        if i % 1000 == 0: print(row[0], n.oe)
         
         if i == 60000:
             with open(fpath+'w.json', 'w') as f: json.dump([n.wih.tolist(), n.who.tolist()], f)
